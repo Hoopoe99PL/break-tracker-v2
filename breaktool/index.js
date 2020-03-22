@@ -7,6 +7,7 @@ let queue = [];
 let allowedSlots = 2;
 const currentBreaks = new Map();
 const timestamps = new Map();
+let ADMToken = 'ADMToken';
 
 app.get("/", (req,res)=>{
     res.sendFile(__dirname + '/src/index.html');
@@ -19,6 +20,7 @@ function getCurrTimeStamp(){
     const currDate = new Date();
     return currDate.getHours() + ':' + currDate.getMinutes() + ':' + currDate.getSeconds();
 };
+
 function getQueIndex(id){
     let index = queue.findIndex(e=>{
         return e === id;
@@ -62,6 +64,30 @@ function takeBreak(id){
 
 //io
 io.on("connection", (socket)=>{
+// ADM FUNCTION needs to be here to access socket details
+function ADMAssertAndExecute(queryDetails){
+    const command = queryDetails[0];
+    const flags = queryDetails[1];
+    if(command === '/slots'){
+        if(!isNaN(parseInt(flags))){
+            allowedSlots = parseInt(flags);
+            io.emit('slot-ui-update', allowedSlots);
+        }else{
+            socket.emit('adm-entry-not-recognized', queryDetails);
+        }
+    }else if(command === '/kick'){
+        queue.forEach(e=>{
+            if (users.get(e) === flags){
+                cancelUserStatus(e);
+            }
+        });
+    }else{
+        socket.emit('adm-entry-not-recognized', queryDetails);
+    }
+};
+// --------------------------------------------------------------
+
+
     console.log(`New user connected under socket ID: ${socket.id}, timestamp below:`);
     console.log(socket.handshake.time);
     socket.on("auth-user", (username)=>{
@@ -69,7 +95,8 @@ io.on("connection", (socket)=>{
         const validatorArrChecker = validatorArr.filter(e=>{
             return e === username;
         });
-        if (validatorArrChecker.length >=1 || !isNaN(parseFloat(username.split('')[0]))){
+        const regex = /^[a-zA-Z]+$/;
+        if (validatorArrChecker.length >=1 || !regex.test(username)){
             socket.emit('name-taken-auth-again', username);
         }else{
             console.log(`${socket.id} authenticated as ${username}`);
@@ -102,6 +129,14 @@ io.on("connection", (socket)=>{
         if (index < allowedSlots && index > -1){
             takeBreak(socket.id);
         }
+    });
+    socket.on('adm-auth-attempt',admPass => {
+        if(admPass === ADMToken){
+            socket.emit('adm-authenticated');
+        };
+    });
+    socket.on('adm-query', ADMQuery => {
+        ADMAssertAndExecute(ADMQuery);
     });
 });
 

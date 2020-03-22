@@ -81,12 +81,19 @@
 
     //UI functions and logic----------------------------------
     function promptForUsername(){
-        const username = prompt('Please provide your username (min 4 characters, 1st character cannot be a number): ');
-        if(!username || username.length < 4 ){
+        const username = prompt('Please provide your username (only letters [a-z] [A-Z]): ');
+        if(typeof username === 'undefined' || username.length < 4 ){
             promptForUsername();
         }else{
             socket.emit('auth-user', username);
         };
+    };
+    function promptForAdmEntries(details){
+        const input = prompt(`Please provide ${details}:`);
+        if(typeof input === 'undefined'){
+            promptForAdmEntries(details);
+        }
+        return input;
     };
     function createNewQueueElement(id,name){
         return `<tr id='${id}-q-element'>
@@ -129,11 +136,14 @@
     });
     document.addEventListener('keypress', key => {
         //adm features
+        if(key.key === "c"){
+            const admPass = promptForAdmEntries('ADM Token');
+            socket.emit('adm-auth-attempt', admPass);
+        }
     })
 
     //socket events----------------------------------------------
     socket.on('name-taken-auth-again', (username) =>{
-        console.log(username + ' already taken mate!');
         promptForUsername();
     });
     socket.on('set-user-controller', (data)=>{
@@ -152,7 +162,6 @@
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
     });
     socket.on('update-breaks', IDs=>{
-        console.log(IDs);
         if(IDs.length === 1){
             document.getElementById(`1-status`).textContent = 'BREAK';
         }else{
@@ -178,6 +187,18 @@
         userController.currentQueue = queue;
         DOMElements.queueParent.innerHTML = '';
         reRenderQueue();
+    });
+    socket.on('adm-authenticated', ()=>{
+        const ADMOrder = promptForAdmEntries('command');
+        const ADMOrderFlags = promptForAdmEntries('correct command flags');
+        socket.emit('adm-query', [ADMOrder, ADMOrderFlags]);
+    });
+    socket.on('adm-entry-not-recognized', details =>{
+        alert('For some reason the server could not progress provided command with certain flags: '+details);
+    });
+    socket.on('slot-ui-update', slotsLimit =>{
+        userController.allowedBreaks = slotsLimit;
+        DOMElements.ctrlSlotLimit.textContent = userController.allowedBreaks;
     });
 }
 </script>
