@@ -2,7 +2,7 @@
 Simple real time Break Tracker to maintain break queue in the workflow
 
 # What is the purpose? 
-My Service Desk required a tool that would handle the break queue and help to maintaing a workflow. I have decided to create this application in order to help my team. 
+My Service Desk required a tool that would handle the break queue and help with maintaing a workflow. I have decided to create this application in order to help my team. 
 
 # How to run?
 #### In case you are only a client please go to Step 3 and instead of 'localhost' provide an IP Address / DNS name of the server the app is running on. If you are not sure about the address please ask the administrator.
@@ -11,9 +11,10 @@ In order to run the application you require [Node](https://nodejs.org/en/) to be
 ### Step 2
 After node is installed and added to path please open command prompt or PowerShell, navigate to the location you are storing the project and use
 ```
+npm install
 node index.js
 ```
-in order to run the local HTTP server. 
+in order to  install required packages run the local HTTP server. 
 
 ### Step 3
 Open your web browser and navigate to localhost:3000. 
@@ -23,14 +24,14 @@ You are all done. The application is now running in your browser.
 # How to use? 
 
 #### Description of the app
-Application is a break tracker refreshing in real time. First you need to provide you username which can be only be made of letters in range a-zA-z. After you authenticate yourself you will be able to see your username and number of available slots for break in the queue.
+Application is a break tracker refreshing in real time. First you need to provide your username which can only be made of letters in range a-zA-z. After you authenticate yourself you will be able to see your username and number of available slots for break in the queue.
 ##### Buttons
 
-Reserve - lets you reserve a break in the queue, your status is changed to "RESERVE" and everyone can see that you are waiting for a break. You cannot reserve a break while being in BREAK status.
+Reserve - lets you reserve a break in the queue, your status gets changed to "RESERVE" and everyone can see that you are waiting for a break. You cannot reserve a break while being in a BREAK status.
 
-Break - your status is changed to break if you are able to take one. There needs to be a free slot and you need to be in a position to take a break (no people in RESERVE status being there longer than you). 
+Break - your status gets changed to break if you are able to take one. There needs to be a free slot and you need to be in a position to take a break (no people in RESERVE status being there longer than you). 
 
-Cancel - lets you cancel current status. You are remove from the queue no matter what status you are in. 
+Cancel - lets you cancel current status. You get removed from the queue no matter what status you are in. 
 
 # Admin features
 
@@ -38,7 +39,7 @@ Cancel - lets you cancel current status. You are remove from the queue no matter
 
 /slots - this command lets you set the new break slots limit. You need to provide a command /slot, then you will be prompted for a flag which needs to be an Integer. 
 
-/kick - this command lets you delete anyone from the queue no matter the status. You need to provide a comman /kick, then you will be prompted for a flag which needs to be a username of the guy you want to delete from the queue. 
+/kick - this command lets you delete anyone from the queue no matter the status. You need to provide a command /kick, then you will be prompted for a flag which needs to be a Username of the person you want to delete from the queue. 
 
 # Stack
 
