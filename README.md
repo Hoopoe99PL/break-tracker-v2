@@ -5,7 +5,7 @@ Simple real time Break Tracker to maintain break queue in the workflow
 My Service Desk required a tool that would handle the break queue and help to maintaing a workflow. I have decided to create this application in order to help my team. 
 
 # How to run?
-#### In case you are only a client please got to Step 3 and instead of 'localhost' provide an IP Address / DNS name of the server the app is running on. If you are not sure about the address please ask the administrator.
+#### In case you are only a client please go to Step 3 and instead of 'localhost' provide an IP Address / DNS name of the server the app is running on. If you are not sure about the address please ask the administrator.
 ### Step 1
 In order to run the application you require [Node](https://nodejs.org/en/) to be installed on your machine. by installing node you also install [npm](https://www.npmjs.com/) which is package manager making possible to download all required packages. 
 ### Step 2
