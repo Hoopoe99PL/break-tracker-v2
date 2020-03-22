@@ -34,7 +34,7 @@ Cancel - lets you cancel current status. You are remove from the queue no matter
 
 # Admin features
 
-##### If you only know the admin password set in the code by any other Admin you can press C while being connected to breaktool and user one of two available commands:
+##### If you only know the admin password set in the code by any other Admin you can press C while being connected to breaktool and use one of two available commands:
 
 /slots - this command lets you set the new break slots limit. You need to provide a command /slot, then you will be prompted for a flag which needs to be an Integer. 
 
