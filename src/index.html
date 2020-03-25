@@ -162,7 +162,7 @@
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
     });
     socket.on('update-breaks', names=>{
-                IDs.forEach(e=>{
+                names.forEach(e=>{
                     document.getElementById(`${e}-status`).textContent = 'BREAK';
                 });
     });
