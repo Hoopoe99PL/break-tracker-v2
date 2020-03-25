@@ -162,11 +162,11 @@
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
     });
     socket.on('update-breaks', names=>{
-                console.log(names);
-                names.forEach(e=>{
-                    console.log(e);
+                if(names.length > 0){
+                    names.forEach(e=>{
                     document.getElementById(`${e}-status`).textContent = 'BREAK';
                 });
+                };
     });
     socket.on('u-users-list', data =>{
         data.forEach(e=>{
