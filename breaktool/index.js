@@ -93,7 +93,7 @@ function ADMAssertAndExecute(queryDetails){
     socket.on("auth-user", (username)=>{
         const validatorArr = Array.from(users.values());
         const validatorArrChecker = validatorArr.filter(e=>{
-            return e === username;
+            return e.toLowerCase() === username.toLowerCase();
         });
         const regex = /^[a-zA-Z]+$/;
         if (validatorArrChecker.length >=1 || !regex.test(username)){
