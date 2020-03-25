@@ -162,6 +162,9 @@
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
     });
     socket.on('update-breaks', IDs=>{
+        if(IDs.length === 1){
+            document.getElementById(`${IDs[0]}-status`).textContent = 'BREAK';
+        }else{
             IDs.forEach(e=>{
                 document.getElementById(`${e+1}-status`).textContent = 'BREAK';
             });
