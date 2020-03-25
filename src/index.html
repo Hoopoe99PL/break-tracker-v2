@@ -99,7 +99,7 @@
         return `<tr id='${id}-q-element'>
                     <th scope="row" id='${id}-queuePos'>${id}</th>
                     <td id='${id}-username'>${name}</td>
-                    <td id='${name}-status class'>RESERVE</td>
+                    <td id='${name}-status'>RESERVE</td>
                     <td id='${id}-inStatusTime' class='${name}'>00:00</td>
                 </tr>`;
     };
@@ -162,7 +162,9 @@
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
     });
     socket.on('update-breaks', names=>{
+                console.log(names);
                 names.forEach(e=>{
+                    console.log(e);
                     document.getElementById(`${e}-status`).textContent = 'BREAK';
                 });
     });
