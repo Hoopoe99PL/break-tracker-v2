@@ -119,6 +119,7 @@ function ADMAssertAndExecute(queryDetails){
     socket.on('disconnect', ()=>{
         cancelUserStatus(socket.id);
         users.delete(socket.id);
+        currentBreaks.remove(socket.id);
         io.emit('u-users-list', Array.from(users));
     });
     socket.on('cancel-user-status', ()=>{
