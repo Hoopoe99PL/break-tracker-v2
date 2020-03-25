@@ -99,7 +99,7 @@
         return `<tr id='${id}-q-element'>
                     <th scope="row" id='${id}-queuePos'>${id}</th>
                     <td id='${id}-username'>${name}</td>
-                    <td id='${id}-status'>RESERVE</td>
+                    <td id='${name}-status class'>RESERVE</td>
                     <td id='${id}-inStatusTime' class='${name}'>00:00</td>
                 </tr>`;
     };
@@ -160,11 +160,10 @@
             const id = queue.length;
             let newQueueElement = createNewQueueElement(id,name);
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
-            console.log('Hello Murat :)')
     });
-    socket.on('update-breaks', IDs=>{
+    socket.on('update-breaks', names=>{
                 IDs.forEach(e=>{
-                    document.getElementById(`${e+1}-status`).textContent = 'BREAK';
+                    document.getElementById(`${e}-status`).textContent = 'BREAK';
                 });
     });
     socket.on('u-users-list', data =>{

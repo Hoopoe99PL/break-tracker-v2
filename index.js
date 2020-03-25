@@ -55,8 +55,8 @@ function takeBreak(id){
         const checker = currentBreaks.get(id);
         if (typeof checker === 'undefined'){
             timestamps.set(id, getCurrTimeStamp());
-            currentBreaks.set(id,getQueIndex(id));
-            io.emit('update-breaks', Array.from(currentBreaks.values()));
+            currentBreaks.set(id, users.get(id));
+            io.emit('update-breaks', Array.from(currentBreaks));
             io.emit('u-status-timestamp', Array.from(timestamps));
         };
 };
