@@ -10,7 +10,7 @@ const timestamps = new Map();
 let ADMToken = 'ADMToken';
 
 app.get("/", (req,res)=>{
-    res.sendFile(__dirname + '/../src/index.html');
+    res.sendFile(__dirname + '/src/index.html');
 });
 
 app.use(express.static(__dirname + "/src"));
