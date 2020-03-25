@@ -139,8 +139,10 @@ function ADMAssertAndExecute(queryDetails){
         ADMAssertAndExecute(ADMQuery);
     });
 });
+const server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+const server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 
-http.listen(3000, ()=>{
-    console.log('Listening on 3000. Server up and running...');
+http.listen(server_port, server_ip_address, ()=>{
+    console.log('Listening on '+server_ip_address +'. Server up and running on '+server_port);
 });
