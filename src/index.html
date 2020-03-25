@@ -160,6 +160,7 @@
             const id = queue.length;
             let newQueueElement = createNewQueueElement(id,name);
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
+            console.log('Hello Murat :)')
     });
     socket.on('update-breaks', IDs=>{
                 document.getElementById(`${e+1}-status`).textContent = 'BREAK';

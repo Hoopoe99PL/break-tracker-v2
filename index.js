@@ -112,8 +112,10 @@ function ADMAssertAndExecute(queryDetails){
     });
     socket.on('u-res-break', ()=>{
         const index = getQueIndex(socket.id);
+
         if (index === -1){
             reserveBreak(socket.id);
+            console.log(index +'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
         };
     });
     socket.on('disconnect', ()=>{
