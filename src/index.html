@@ -163,7 +163,9 @@
             console.log('Hello Murat :)')
     });
     socket.on('update-breaks', IDs=>{
-                document.getElementById(`${e+1}-status`).textContent = 'BREAK';
+                IDs.forEach(e=>{
+                    document.getElementById(`${e+1}-status`).textContent = 'BREAK';
+                });
     });
     socket.on('u-users-list', data =>{
         data.forEach(e=>{
