@@ -140,6 +140,6 @@ function ADMAssertAndExecute(queryDetails){
     });
 });
 
-http.listen(3000, ()=>{
-    console.log('Listening on 3000.');
+http.listen(process.env.PORT, ()=>{
+    console.log('Listening.');
 });
