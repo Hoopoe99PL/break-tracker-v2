@@ -8,6 +8,7 @@ let allowedSlots = 2;
 const currentBreaks = new Map();
 const timestamps = new Map();
 let ADMToken = 'ADMToken';
+const Intervals = new Map();
 
 app.get("/", (req,res)=>{
     res.sendFile(__dirname + '/src/index.html');
@@ -85,6 +86,15 @@ function ADMAssertAndExecute(queryDetails){
         socket.emit('adm-entry-not-recognized', queryDetails);
     }
 };
+function setOrRefreshConfig(){
+    socket.emit('set-user-controller', {queue: queue, allowedSlots: allowedSlots, name: username, id: socket.id});
+    if(Array.from(timestamps).length > 0){
+        socket.emit('u-status-timestamp', Array.from(timestamps));
+    };
+    if(Array.from(currentBreaks.values()).length > 0){
+        socket.emit('update-breaks', Array.from(currentBreaks.values()));
+    };
+}
 // --------------------------------------------------------------
 
 
@@ -102,11 +112,9 @@ function ADMAssertAndExecute(queryDetails){
             console.log(`${socket.id} authenticated as ${username}`);
             users.set(socket.id, username);
             io.emit('u-users-list', Array.from(users));
-            socket.emit('set-user-controller', {queue: queue, allowedSlots: allowedSlots, name: username, id: socket.id});
-            if(Array.from(timestamps).length > 0){
-            socket.emit('u-status-timestamp', Array.from(timestamps));
-            };
-            socket.emit('update-breaks', Array.from(currentBreaks.values()));
+            setOrRefreshConfig();
+            const interval = setInterval(setOrRefreshConfig, 60000);
+            Intervals.set(interval, socket.id);
         }
 
     });
@@ -122,6 +130,8 @@ function ADMAssertAndExecute(queryDetails){
         cancelUserStatus(socket.id);
         users.delete(socket.id);
         io.emit('u-users-list', Array.from(users));
+        clearInterval(Intervals.get(socket.id));
+        Intervals.delete(socket.id);
     });
     socket.on('cancel-user-status', ()=>{
         cancelUserStatus(socket.id);
