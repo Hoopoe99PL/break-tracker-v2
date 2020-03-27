@@ -30,6 +30,7 @@ function getQueIndex(id){
 };
 function cancelUserStatus(id){
     let index = getQueIndex(id);
+    io.emit('u-users-list', Array.from(users));
     if (index > -1){
         queue.splice(index, 1)
         io.emit('del-user-f-q', queue);
@@ -63,7 +64,13 @@ function takeBreak(id){
             io.emit('u-status-timestamp', Array.from(timestamps));
         };
 };
-
+function isSessionExpired(id){
+    if (typeof users.get(id) === 'undefined'){
+        socket.emit('name-taken-auth-again');
+    }else{
+        return users.get(id);
+    }
+};
 
 //io
 io.on("connection", (socket)=>{
@@ -109,7 +116,7 @@ function setOrRefreshConfig(username){
         });
         const regex = /^[a-zA-Z]+$/;
         if (validatorArrChecker.length >=1 || !regex.test(username)){
-            socket.emit('name-taken-auth-again', username);
+            socket.emit('name-taken-auth-again');
         }else{
             console.log(`${socket.id} authenticated as ${username}`);
             users.set(socket.id, username);
@@ -121,12 +128,13 @@ function setOrRefreshConfig(username){
 
     });
     socket.on('u-res-break', ()=>{
-        const index = getQueIndex(socket.id);
-
-        if (index === -1){
-            reserveBreak(socket.id);
-            console.log(index +'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-        };
+        if(typeof isSessionExpired(socket.id) !== 'undefined'){
+            const index = getQueIndex(socket.id);
+            if (index === -1){
+                reserveBreak(socket.id);
+                console.log(index +'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+            };
+        }
     });
     socket.on('disconnect', ()=>{
         cancelUserStatus(socket.id);
@@ -136,12 +144,16 @@ function setOrRefreshConfig(username){
         intervals.delete(socket.id);
     });
     socket.on('cancel-user-status', ()=>{
-        cancelUserStatus(socket.id);
+        if(typeof isSessionExpired(socket.id) !== 'undefined'){
+            cancelUserStatus(socket.id);
+        }
     });
     socket.on('u-takes-break', ()=>{
-        const index = getQueIndex(socket.id);
-        if (index < allowedSlots && index > -1){
-            takeBreak(socket.id);
+        if(typeof isSessionExpired(socket.id) !== 'undefined'){
+            const index = getQueIndex(socket.id);
+             if (index < allowedSlots && index > -1){
+                 takeBreak(socket.id);
+                }
         }
     });
     socket.on('adm-auth-attempt',admPass => {

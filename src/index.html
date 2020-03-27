@@ -144,7 +144,7 @@
     })
 
     //socket events----------------------------------------------
-    socket.on('name-taken-auth-again', (username) =>{
+    socket.on('name-taken-auth-again', () =>{
         promptForUsername();
     });
     socket.on('set-user-controller', (data)=>{
