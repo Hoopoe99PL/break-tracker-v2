@@ -86,7 +86,7 @@ function ADMAssertAndExecute(queryDetails){
         socket.emit('adm-entry-not-recognized', queryDetails);
     }
 };
-function setOrRefreshConfig(){
+function setOrRefreshConfig(username){
     socket.emit('set-user-controller', {queue: queue, allowedSlots: allowedSlots, name: username, id: socket.id});
     if(Array.from(timestamps).length > 0){
         socket.emit('u-status-timestamp', Array.from(timestamps));
