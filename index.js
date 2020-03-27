@@ -112,8 +112,8 @@ function setOrRefreshConfig(){
             console.log(`${socket.id} authenticated as ${username}`);
             users.set(socket.id, username);
             io.emit('u-users-list', Array.from(users));
-            setOrRefreshConfig();
-            const interval = setInterval(setOrRefreshConfig, 60000);
+            setOrRefreshConfig(users.get(socket.id));
+            const interval = setInterval(setOrRefreshConfig,60000, users.get(socket.id));
             intervals.set(interval, socket.id);
         }
 
