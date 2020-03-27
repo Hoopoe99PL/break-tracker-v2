@@ -104,6 +104,7 @@
                 </tr>`;
     };
     function reRenderQueue(){
+        DOMElements.queueParent.innerHTML = '';
         let id=1;
         let name, newQueueElement;
         for (let e of userController.currentQueue){
@@ -183,7 +184,6 @@
     });
     socket.on('del-user-f-q', queue=>{
         userController.currentQueue = queue;
-        DOMElements.queueParent.innerHTML = '';
         reRenderQueue();
     });
     socket.on('adm-authenticated', ()=>{
