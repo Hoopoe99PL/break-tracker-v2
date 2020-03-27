@@ -48,6 +48,7 @@ function reserveBreak(id){
     if (typeof checker === 'undefined'){
         queue.push(id);
         timestamps.set(id, getCurrTimeStamp());
+        io.emit('u-users-list', Array.from(users));
         io.emit('add-user-queue', queue);
         io.emit('u-status-timestamp', Array.from(timestamps));
     };
@@ -57,6 +58,7 @@ function takeBreak(id){
         if (typeof checker === 'undefined'){
             timestamps.set(id, getCurrTimeStamp());
             currentBreaks.set(id, users.get(id));
+            io.emit('u-users-list', Array.from(users));
             io.emit('update-breaks', Array.from(currentBreaks.values()));
             io.emit('u-status-timestamp', Array.from(timestamps));
         };
