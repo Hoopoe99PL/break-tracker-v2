@@ -8,7 +8,7 @@ let allowedSlots = 2;
 const currentBreaks = new Map();
 const timestamps = new Map();
 let ADMToken = 'ADMToken';
-const Intervals = new Map();
+const intervals = new Map();
 
 app.get("/", (req,res)=>{
     res.sendFile(__dirname + '/src/index.html');
@@ -114,7 +114,7 @@ function setOrRefreshConfig(){
             io.emit('u-users-list', Array.from(users));
             setOrRefreshConfig();
             const interval = setInterval(setOrRefreshConfig, 60000);
-            Intervals.set(interval, socket.id);
+            intervals.set(interval, socket.id);
         }
 
     });
@@ -130,8 +130,8 @@ function setOrRefreshConfig(){
         cancelUserStatus(socket.id);
         users.delete(socket.id);
         io.emit('u-users-list', Array.from(users));
-        clearInterval(Intervals.get(socket.id));
-        Intervals.delete(socket.id);
+        clearInterval(intervals.get(socket.id));
+        intervals.delete(socket.id);
     });
     socket.on('cancel-user-status', ()=>{
         cancelUserStatus(socket.id);
