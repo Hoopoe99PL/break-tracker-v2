@@ -58,6 +58,23 @@
         ctrlUsername: document.querySelector('#ctrl-username'),
 
     };
+    const userController = {
+        allowedBreaks: NaN,
+        slotsTaken: NaN,
+        status: {
+            state: 'idle',
+            timestamps: new Map(),
+        },
+        username: undefined,
+        id: undefined,
+        placeInQueue: NaN,
+        users: new Map(),
+        onBreak: new Map(),
+        currentQueue: [],
+    };
+
+
+
     //booting up
     const socket = io();
     promptForUsername();
@@ -86,28 +103,15 @@
                     <td id='${id}-inStatusTime' class='${name}'>00:00</td>
                 </tr>`;
     };
-    function reRenderQueue(queue, users){
-        DOMElements.queueParent.innerHTML = '';
+    function reRenderQueue(){
         let id=1;
-        for (let e of queue){
-            DOMElements.queueParent.insertAdjacentHTML('beforeend',createNewQueueElement(id, users.get(e)));
+        let name, newQueueElement;
+        for (let e of userController.currentQueue){
+            name = userController.users.get(e);
+            newQueueElement = createNewQueueElement(id, name)
+            DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
             id++;
         };
-    };
-    function updateBreaks(names){
-        if(names.length > 0){
-            names.forEach(e=>{
-                 document.getElementById(`${e}-status`).textContent = 'BREAK';
-            });
-        };
-    };
-    function updateTimeStamps(timestamps, users){
-        timestamps.forEach(e=>{
-            const cName = users.get(e[0]);
-            if (typeof cName !== 'undefined'){
-                document.querySelector(`.${cName}`).textContent = e[1];
-            }
-        });
     };
 
 
@@ -139,38 +143,60 @@
     })
 
     //socket events----------------------------------------------
-    socket.on('name-taken-auth-again', username =>{
+    socket.on('name-taken-auth-again', (username) =>{
         promptForUsername();
     });
-    socket.on('set-user-controller', data => {
-        DOMElements.ctrlSlotLimit.textContent = data.allowedSlots;
-        DOMElements.ctrlUsername.textContent = data.name;
-        reRenderQueue(data.queue, data.users);
+    socket.on('set-user-controller', (data)=>{
+        userController.currentQueue = data.queue;
+        userController.allowedBreaks = data.allowedSlots;
+        userController.username = data.name;
+        userController.id = data.id;
+        DOMElements.ctrlSlotLimit.textContent = userController.allowedBreaks;
+        DOMElements.ctrlUsername.textContent = userController.username;
+        reRenderQueue();
     });
-    socket.on('add-user-queue', details => {
-            const name = details.users.get(details.queue[details.queue.length - 1]);
-            let newQueueElement = createNewQueueElement(details.queue.length, name);
+    socket.on('add-user-queue', (queue)=>{
+            const name = userController.users.get(queue[queue.length - 1]);
+            const id = queue.length;
+            let newQueueElement = createNewQueueElement(id,name);
             DOMElements.queueParent.insertAdjacentHTML('beforeend',newQueueElement);
     });
-    socket.on('update-breaks', names => {
-                updateBreaks(names);
+    socket.on('update-breaks', names=>{
+                if(names.length > 0){
+                    names.forEach(e=>{
+                    document.getElementById(`${e}-status`).textContent = 'BREAK';
+                });
+                };
     });
-    socket.on('u-status-timestamp', details => {
-        updateTimeStamps(details.timestamps, details.users);
+    socket.on('u-users-list', data =>{
+        data.forEach(e=>{
+            userController.users.set(e[0],e[1]);
+        });
     });
-    socket.on('del-user-f-q', details => {
-        reRenderQueue(details.queue, details.users);
+    socket.on('u-status-timestamp', timestampsAndUsers=>{
+
+        timestampsAndUsers.forEach(e=>{
+            const cName = userController.users.get(e[0]);
+            document.querySelector(`.${cName}`).textContent = e[1];
+        });
+
     });
-    socket.on('adm-authenticated', () => {
+    socket.on('del-user-f-q', queue=>{
+        userController.currentQueue = queue;
+        DOMElements.queueParent.innerHTML = '';
+        reRenderQueue();
+    });
+    socket.on('adm-authenticated', ()=>{
         const ADMOrder = promptForAdmEntries('command');
         const ADMOrderFlags = promptForAdmEntries('correct command flags');
         socket.emit('adm-query', [ADMOrder, ADMOrderFlags]);
     });
-    socket.on('adm-entry-not-recognized', details => {
+    socket.on('adm-entry-not-recognized', details =>{
         alert('For some reason the server could not progress provided command with certain flags: '+details);
     });
-    socket.on('slot-ui-update', slotsLimit => {
-        DOMElements.ctrlSlotLimit.textContent = slotsLimit;
+    socket.on('slot-ui-update', slotsLimit =>{
+        userController.allowedBreaks = slotsLimit;
+        DOMElements.ctrlSlotLimit.textContent = userController.allowedBreaks;
     });
 }
 </script>
