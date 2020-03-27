@@ -66,6 +66,7 @@ function takeBreak(id){
 };
 function isSessionExpired(id){
     if (typeof users.get(id) === 'undefined'){
+        cancelUserStatus(socket.id);
         socket.emit('name-taken-auth-again');
     }else{
         return users.get(id);
