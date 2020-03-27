@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const http = require('http').createServer(app);
-const io = require('socket.io')(http, {'pingInterval': 1000, 'pingTimeout': 1000});
+const io = require('socket.io')(http);
 const users = new Map();
 let queue = [];
 let allowedSlots = 2;
