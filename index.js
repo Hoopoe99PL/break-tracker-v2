@@ -11,10 +11,19 @@ let ADMToken = 'ADMToken';
 const intervals = new Map();
 
 app.get("/", (req,res)=>{
-    res.sendFile(__dirname + '/src/index.html');
-});
+    fs.readFile(__dirname + '/src/index.html',
+  function (err, data) {
+    if (err) {
+      res.writeHead(500);
+      return res.end('Error loading index.html');
+    }
 
+    res.writeHead(200);
+    res.end(data);
+  });
+});
 app.use(express.static(__dirname + "/src"));
+
 // functions
 
 function getCurrTimeStamp(){
@@ -64,15 +73,6 @@ function takeBreak(id){
             io.emit('u-status-timestamp', Array.from(timestamps));
         };
 };
-function isSessionExpired(id){
-    if (typeof users.get(id) === 'undefined'){
-        cancelUserStatus(socket.id);
-        socket.emit('name-taken-auth-again');
-    }else{
-        return users.get(id);
-    }
-};
-
 //io
 io.on("connection", (socket)=>{
 // ADM FUNCTION needs to be here to access socket details
@@ -129,13 +129,13 @@ function setOrRefreshConfig(username){
 
     });
     socket.on('u-res-break', ()=>{
-        if(typeof isSessionExpired(socket.id) !== 'undefined'){
+
             const index = getQueIndex(socket.id);
             if (index === -1){
                 reserveBreak(socket.id);
                 console.log(index +'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
             };
-        }
+
     });
     socket.on('disconnect', ()=>{
         cancelUserStatus(socket.id);
@@ -145,17 +145,17 @@ function setOrRefreshConfig(username){
         intervals.delete(socket.id);
     });
     socket.on('cancel-user-status', ()=>{
-        if(typeof isSessionExpired(socket.id) !== 'undefined'){
+
             cancelUserStatus(socket.id);
-        }
+
     });
     socket.on('u-takes-break', ()=>{
-        if(typeof isSessionExpired(socket.id) !== 'undefined'){
+
             const index = getQueIndex(socket.id);
              if (index < allowedSlots && index > -1){
                  takeBreak(socket.id);
                 }
-        }
+
     });
     socket.on('adm-auth-attempt',admPass => {
         if(admPass === ADMToken){
