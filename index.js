@@ -8,7 +8,7 @@ let allowedSlots = 2;
 const currentBreaks = new Map();
 const timestamps = new Map();
 let ADMToken = 'ADMToken';
-
+const intervals = new Map();
 app.get("/", (req,res)=>{
     res.sendFile(__dirname + '/src/index.html');
 });
@@ -31,11 +31,11 @@ function cancelUserStatus(id){
     let index = getQueIndex(id);
     if (index > -1){
         queue.splice(index, 1)
-        io.emit('del-user-f-q', queue);
+        io.emit('del-user-f-q', {queue: queue, users: users});
     }
     timestamps.delete(id);
     if(Array.from(timestamps).length > 0){
-        io.emit('u-status-timestamp', Array.from(timestamps));
+        io.emit('u-status-timestamp', {timestamps: Array.from(timestamps), users: users});
      };
      if(typeof currentBreaks.get(id)!=='undefined'){
          currentBreaks.delete(id);
@@ -47,8 +47,8 @@ function reserveBreak(id){
     if (typeof checker === 'undefined'){
         queue.push(id);
         timestamps.set(id, getCurrTimeStamp());
-        io.emit('add-user-queue', queue);
-        io.emit('u-status-timestamp', Array.from(timestamps));
+        io.emit('add-user-queue', {queue: queue, users: users});
+        io.emit('u-status-timestamp', {timestamps: Array.from(timestamps), users: users});
     };
 };
 function takeBreak(id){
@@ -57,7 +57,7 @@ function takeBreak(id){
             timestamps.set(id, getCurrTimeStamp());
             currentBreaks.set(id, users.get(id));
             io.emit('update-breaks', Array.from(currentBreaks.values()));
-            io.emit('u-status-timestamp', Array.from(timestamps));
+            io.emit('u-status-timestamp', {timestamps: Array.from(timestamps), users: users});
         };
 };
 
@@ -102,13 +102,17 @@ function ADMAssertAndExecute(queryDetails){
             console.log(`${socket.id} authenticated as ${username}`);
             users.set(socket.id, username);
             io.emit('u-users-list', Array.from(users));
-            socket.emit('set-user-controller', {queue: queue, allowedSlots: allowedSlots, name: username, id: socket.id});
+            socket.emit('set-user-controller', {queue: queue, allowedSlots: allowedSlots, name: username, users: users});
             if(Array.from(timestamps).length > 0){
-            socket.emit('u-status-timestamp', Array.from(timestamps));
+            socket.emit('u-status-timestamp', {timestamps: Array.from(timestamps), users: users});
             };
             socket.emit('update-breaks', Array.from(currentBreaks.values()));
-        }
-
+            //maintaining the session connection
+            const interval = setInterval((currQueue, currBreaks, currUsers, currTimestamps)=>{
+                socket.emit('refresh-session-event', {queue: currQueue, breaks: currBreaks, users: currUsers, timestamps: currTimestamps});
+            }, 60000, queue, currentBreaks, users, timestamps)
+            intervals.set(socket.id, interval);
+        };
     });
     socket.on('u-res-break', ()=>{
         const index = getQueIndex(socket.id);
@@ -121,6 +125,8 @@ function ADMAssertAndExecute(queryDetails){
     socket.on('disconnect', ()=>{
         cancelUserStatus(socket.id);
         users.delete(socket.id);
+        clearInterval(intervals.get(socket.id));
+        intervals.delete(socket.id);
         io.emit('u-users-list', Array.from(users));
     });
     socket.on('cancel-user-status', ()=>{
