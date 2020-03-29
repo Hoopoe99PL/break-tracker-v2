@@ -76,7 +76,11 @@
 
 
     //booting up
-    const socket = io({reconnection: false,});
+    const socket = io({
+        reconnection: true,
+        reconnectionAttempts: 1,
+        timeout: 3000,
+    });
     socket.on('connect_failed', function() {
         document.write("Sorry, there seems to be an issue with the connection!");
     })
