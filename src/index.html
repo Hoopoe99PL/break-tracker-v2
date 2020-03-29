@@ -83,7 +83,11 @@
     });
     socket.on('connect_failed', function() {
         document.write("Sorry, there seems to be an issue with the connection!");
-    })
+    });
+    setInterval(()=>{
+        DOMElements.queueParent.click();
+        console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+    }, 60000);
     promptForUsername();
 
     //UI functions and logic----------------------------------
