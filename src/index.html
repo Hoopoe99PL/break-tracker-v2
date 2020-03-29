@@ -88,12 +88,8 @@
 
     //UI functions and logic----------------------------------
     function promptForUsername(){
-        const username = prompt('Please provide your username (only letters [a-z] [A-Z]): ');
-        if(typeof username === 'undefined' || username === null || username.length < 4){
-            promptForUsername();
-        }else{
-            socket.emit('auth-user', username);
-        };
+        const username = prompt('Please provide your username (only letters [a-z] [A-Z], no special characters, no numbers): ');
+        socket.emit('auth-user', username);
     };
     function promptForAdmEntries(details){
         const input = prompt(`Please provide ${details}:`);

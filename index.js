@@ -12,33 +12,47 @@ let ADMToken = 'ADMToken';
 const intervals = new Map();
 
 app.get("/", (req,res)=>{
+
     fs.readFile(__dirname + '/src/index.html',
   function (err, data) {
+
     if (err) {
       res.writeHead(500);
       return res.end('Error loading index.html');
     }
-
     res.writeHead(200);
     res.end(data);
+
   });
 });
+
 app.use(express.static(__dirname + "/src"));
+
+http.listen(process.env.PORT, ()=>{
+
+    console.log('Listening.');
+
+});
 
 // functions
 
 function getCurrTimeStamp(){
+
     const currDate = new Date();
     return currDate.getHours() + ':' + currDate.getMinutes() + ':' + currDate.getSeconds();
+
 };
 
 function getQueIndex(id){
+
     let index = queue.findIndex(e=>{
         return e === id;
     });
     return index;
+
 };
 function cancelUserStatus(id){
+
     let index = getQueIndex(id);
     io.emit('u-users-list', Array.from(users));
     if (index > -1){
@@ -53,8 +67,10 @@ function cancelUserStatus(id){
          currentBreaks.delete(id);
      }
      io.emit('update-breaks', Array.from(currentBreaks.values()));
+
 };
 function reserveBreak(id){
+
     const checker = currentBreaks.get(id);
     if (typeof checker === 'undefined'){
         queue.push(id);
@@ -63,8 +79,10 @@ function reserveBreak(id){
         io.emit('add-user-queue', queue);
         io.emit('u-status-timestamp', Array.from(timestamps));
     };
+
 };
 function takeBreak(id){
+
         const checker = currentBreaks.get(id);
         if (typeof checker === 'undefined'){
             timestamps.set(id, getCurrTimeStamp());
@@ -73,9 +91,11 @@ function takeBreak(id){
             io.emit('update-breaks', Array.from(currentBreaks.values()));
             io.emit('u-status-timestamp', Array.from(timestamps));
         };
+
 };
 //io
 io.on("connection", (socket)=>{
+
 // ADM FUNCTION needs to be here to access socket details
 function ADMAssertAndExecute(queryDetails){
     const command = queryDetails[0];
@@ -111,21 +131,33 @@ function setOrRefreshConfig(username){
 
     console.log(`New user connected under socket ID: ${socket.id}, timestamp below:`);
     console.log(socket.handshake.time);
+
     socket.on("auth-user", (username)=>{
+
         const validatorArr = Array.from(users.values());
         const validatorArrChecker = validatorArr.filter(e=>{
             return e.toLowerCase() === username.toLowerCase();
         });
         const regex = /^[a-zA-Z]+$/;
-        if (validatorArrChecker.length >=1 || !regex.test(username)){
+        if (
+            validatorArrChecker.length >=1  ||
+            !regex.test(username)           ||
+            typeof username === 'undefined' ||
+            username === null               ||
+            username.length < 4
+            ){
+
             socket.emit('name-taken-auth-again');
+
         }else{
+
             console.log(`${socket.id} authenticated as ${username}`);
             users.set(socket.id, username);
             io.emit('u-users-list', Array.from(users));
             setOrRefreshConfig(users.get(socket.id));
             const interval = setInterval(setOrRefreshConfig,60000, users.get(socket.id));
             intervals.set(interval, socket.id);
+
         }
 
     });
@@ -139,6 +171,7 @@ function setOrRefreshConfig(username){
 
     });
     socket.on('disconnect', ()=>{
+
         cancelUserStatus(socket.id);
         users.delete(socket.id);
         io.emit('u-users-list', Array.from(users));
@@ -147,6 +180,7 @@ function setOrRefreshConfig(username){
         if (!socket.disconnected){
             socket.disconnect();
         }
+
     });
     socket.on('cancel-user-status', ()=>{
 
@@ -162,15 +196,16 @@ function setOrRefreshConfig(username){
 
     });
     socket.on('adm-auth-attempt',admPass => {
+
         if(admPass === ADMToken){
             socket.emit('adm-authenticated');
         };
+
     });
     socket.on('adm-query', ADMQuery => {
-        ADMAssertAndExecute(ADMQuery);
-    });
-});
 
-http.listen(process.env.PORT, ()=>{
-    console.log('Listening.');
+        ADMAssertAndExecute(ADMQuery);
+
+    });
+
 });
