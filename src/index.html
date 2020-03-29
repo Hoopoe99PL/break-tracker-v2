@@ -76,7 +76,10 @@
 
 
     //booting up
-    const socket = io();
+    const socket = io({reconnection: false;});
+    socket.on('connect_failed', function() {
+        document.write("Sorry, there seems to be an issue with the connection!");
+    })
     promptForUsername();
 
     //UI functions and logic----------------------------------
@@ -114,7 +117,11 @@
             id++;
         };
     };
-
+    function forceRefresh(err){
+        DOMElements.controlerBtns.innerHTML = `<p class="text-danger">${err}</p>`;
+        DOMElements.ctrlUsername.textContent = 'DISCONNECTED FROM THE SERVER, REFRESH THE PAGE.';
+        DOMElements.ctrlSlotLimit.textContent = 'DISCONNECTED FROM THE SERVER, REFRESH THE PAGE.';
+    };
 
 
 
@@ -197,6 +204,18 @@
     socket.on('slot-ui-update', slotsLimit =>{
         userController.allowedBreaks = slotsLimit;
         DOMElements.ctrlSlotLimit.textContent = userController.allowedBreaks;
+    });
+    socket.on('connect_error', ()=>{
+        forceRefresh('Connection error, check your network connection and refresh the website if needed to connect again.');
+    });
+    socket.on('connect_timeout', ()=>{
+        forceRefresh('Connection Timed Out, check your network connection and refresh the website if needed to connect again.');
+    });
+    socket.on('reconnect_error', ()=>{
+        forceRefresh('Reconnection Error, check your network connection and refresh the website if needed to connect again.');
+    });
+    socket.on('reconnect_failed', ()=>{
+        forceRefresh('Reconnection failed, check your network connection and refresh the website if needed to connect again.');
     });
 }
 </script>

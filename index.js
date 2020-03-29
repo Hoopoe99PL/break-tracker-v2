@@ -144,6 +144,9 @@ function setOrRefreshConfig(username){
         io.emit('u-users-list', Array.from(users));
         clearInterval(intervals.get(socket.id));
         intervals.delete(socket.id);
+        if (!socket.disconnected){
+            socket.disconnect();
+        }
     });
     socket.on('cancel-user-status', ()=>{
 
