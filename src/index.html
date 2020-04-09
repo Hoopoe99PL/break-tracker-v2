@@ -141,7 +141,7 @@
                     socket.emit('u-res-break', timestamp.toLocaleString());
             break;
             case 'breakBtn':
-                    const timestamp = new Date();
+                    const time = new Date();
                     socket.emit('u-takes-break', timestamp.toLocaleString());
             break;
             default: break;
