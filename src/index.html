@@ -133,10 +133,12 @@
                     socket.emit('cancel-user-status');
             break;
             case 'reserveBtn':
-                    socket.emit('u-res-break');
+                    const timestamp = new Date();
+                    socket.emit('u-res-break', timestamp.toLocaleString());
             break;
             case 'breakBtn':
-                    socket.emit('u-takes-break');
+                    const timestamp = new Date();
+                    socket.emit('u-takes-break', timestamp.toLocaleString());
             break;
             default: break;
         }

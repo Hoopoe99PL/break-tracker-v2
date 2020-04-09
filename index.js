@@ -35,14 +35,6 @@ http.listen(process.env.PORT, ()=>{
 });
 
 // functions
-
-function getCurrTimeStamp(){
-
-    const currDate = new Date();
-    return currDate.getHours() + ':' + currDate.getMinutes() + ':' + currDate.getSeconds();
-
-};
-
 function getQueIndex(id){
 
     let index = queue.findIndex(e=>{
@@ -69,23 +61,23 @@ function cancelUserStatus(id){
      io.emit('update-breaks', Array.from(currentBreaks.values()));
 
 };
-function reserveBreak(id){
+function reserveBreak(id, timestamp){
 
     const checker = currentBreaks.get(id);
     if (typeof checker === 'undefined'){
         queue.push(id);
-        timestamps.set(id, getCurrTimeStamp());
+        timestamps.set(id, timestamp);
         io.emit('u-users-list', Array.from(users));
         io.emit('add-user-queue', queue);
         io.emit('u-status-timestamp', Array.from(timestamps));
     };
 
 };
-function takeBreak(id){
+function takeBreak(id, timestamp){
 
         const checker = currentBreaks.get(id);
         if (typeof checker === 'undefined'){
-            timestamps.set(id, getCurrTimeStamp());
+            timestamps.set(id, timestamp);
             currentBreaks.set(id, users.get(id));
             io.emit('u-users-list', Array.from(users));
             io.emit('update-breaks', Array.from(currentBreaks.values()));
@@ -161,12 +153,11 @@ function setOrRefreshConfig(username){
         }
 
     });
-    socket.on('u-res-break', ()=>{
+    socket.on('u-res-break', (timestamp)=>{
 
             const index = getQueIndex(socket.id);
             if (index === -1){
-                reserveBreak(socket.id);
-                console.log(index +'@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+                reserveBreak(socket.id, timestamp);
             };
 
     });
@@ -187,11 +178,11 @@ function setOrRefreshConfig(username){
             cancelUserStatus(socket.id);
 
     });
-    socket.on('u-takes-break', ()=>{
+    socket.on('u-takes-break', (timestamp)=>{
 
             const index = getQueIndex(socket.id);
              if (index < allowedSlots && index > -1){
-                 takeBreak(socket.id);
+                 takeBreak(socket.id, timestamp);
                 }
 
     });
