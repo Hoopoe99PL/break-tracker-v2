@@ -4,12 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "webpack --mode=development",
+    "prod": "webpack --mode=production",
+    "sass": "node-sass src/css/style.scss public/css/style.css --watch"
   },
   "author": "Łukasz Dzierżawski",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "node-sass": "^4.13.1",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   }
 }

@@ -1,0 +1,140 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
+$color-white: #fff;
+$color-primary: #0097a7;
+$color-success: #00796b;
+$color-wrong: #bf360c;
+$color-primary-light: #00b8d4;
+$color-success-light: #00bfa5;
+$color-wrong-light: #dd2c00;
+$color-dark: #212121;
+$font-s-s: 0.5rem;
+$font-s-m: 1.2rem;
+$font-s-l: 2rem;
+$font-s-xl: 2.5rem;
+$font-f-primary: 'Roboto', sans-serif;
+@mixin list-reset {
+    list-style: none;
+    display: block;
+}
+@mixin btn-hover {
+    cursor: pointer;
+    transform: scale(1.1) rotate(1deg);
+    transition: .2s ease;
+}
+@mixin btn-active($color){
+    outline: none;
+    box-shadow: 0 0 5px 3px $color;
+}
+@mixin reset-btn{
+    background: none;
+    padding: .7rem 1rem;
+    font-size: $font-s-m;
+    color: $color-white;
+    border: none;
+    border-radius: 5px;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: $font-f-primary;
+    color: $color-white;
+}
+body{
+    background: $color-dark;
+}
+.btn{
+    @include reset-btn;
+    &:hover{
+        @include btn-hover;
+    }
+    margin: 5px;
+}
+.btn--primary{
+    background: $color-primary;
+    &:active,
+    &:focus{
+        @include btn-active($color-primary-light)
+    }
+}
+.btn--success{
+    background: $color-success;
+    &:active,
+    &:focus{
+        @include btn-active($color-success-light)
+    }
+}
+.btn--wrong{
+    background: $color-wrong;
+    &:active,
+    &:focus{
+        @include btn-active($color-wrong-light)
+    }
+}
+.welcome__header{
+    font-size: $font-s-xl;
+    font-weight: normal;
+    text-align: center;
+    padding-top: 1rem;
+    height: 10vh;
+}
+.container{
+    display: flex;
+    flex-flow: row wrap;
+    height: 80vh;
+}
+.container__intro{
+    width: 40%;
+    height: 100%;
+    padding: 1.5rem;
+    display: flex;
+    flex-flow: column;
+    align-items: flex-end;
+}
+.container__queue{
+    width: 60%;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.intro__heading{
+    font-size: $font-s-m;
+    font-weight: lighter;
+    padding: .5rem 1rem;
+}
+.intro__item{
+    display: inline-block;
+    text-align: center;
+    padding: .2rem 1rem;
+}
+.item--primary{
+    color: $color-primary;
+}
+.item--success{
+    color: $color-wrong;
+}
+.intro__btn-holder{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+.queue__list{
+    @include list-reset;
+}
+.queue__item{
+    color: $color-success;
+    font-size: $font-s-m;
+}
+.footer{
+    height: 10vh;
+}
+.footer__author{
+    text-align: center;
+    color: $color-success-light;
+    font-size: $font-s-m;
+}
