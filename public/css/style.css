@@ -4,16 +4,16 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Roboto", sans-serif;
-  color: #fff; }
+  color: #e6e3d4; }
 
 body {
-  background: #212121; }
+  background: #27221c; }
 
 .btn {
   background: none;
   padding: .7rem 1rem;
   font-size: 1.2rem;
-  color: #fff;
+  color: #e6e3d4;
   border: none;
   border-radius: 5px;
   margin: 5px; }
@@ -21,24 +21,21 @@ body {
     cursor: pointer;
     transform: scale(1.1) rotate(1deg);
     transition: .2s ease; }
-
-.btn--primary {
-  background: #0097a7; }
-  .btn--primary:active, .btn--primary:focus {
-    outline: none;
-    box-shadow: 0 0 5px 3px #00b8d4; }
-
-.btn--success {
-  background: #00796b; }
-  .btn--success:active, .btn--success:focus {
-    outline: none;
-    box-shadow: 0 0 5px 3px #00bfa5; }
-
-.btn--wrong {
-  background: #bf360c; }
-  .btn--wrong:active, .btn--wrong:focus {
-    outline: none;
-    box-shadow: 0 0 5px 3px #dd2c00; }
+  .btn--primary {
+    background: #0097a7; }
+    .btn--primary:active, .btn--primary:focus {
+      outline: none;
+      box-shadow: 0 0 5px 3px #00b8d4; }
+  .btn--success {
+    background: #00796b; }
+    .btn--success:active, .btn--success:focus {
+      outline: none;
+      box-shadow: 0 0 5px 3px #00bfa5; }
+  .btn--wrong {
+    background: #bf360c; }
+    .btn--wrong:active, .btn--wrong:focus {
+      outline: none;
+      box-shadow: 0 0 5px 3px #dd2c00; }
 
 .welcome__header {
   font-size: 2.5rem;
@@ -51,57 +48,103 @@ body {
   display: flex;
   flex-flow: row wrap;
   height: 80vh; }
-
-.container__intro {
-  width: 40%;
-  height: 100%;
-  padding: 1.5rem;
-  display: flex;
-  flex-flow: column;
-  align-items: flex-end; }
-
-.container__queue {
-  width: 60%;
-  height: 100%;
-  overflow-y: scroll;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; }
-
-.intro__heading {
-  font-size: 1.2rem;
-  font-weight: lighter;
-  padding: .5rem 1rem; }
-
-.intro__item {
-  display: inline-block;
-  text-align: center;
-  padding: .2rem 1rem; }
-
-.item--primary {
-  color: #0097a7; }
-
-.item--success {
-  color: #bf360c; }
+  .container__intro {
+    width: 40%;
+    height: 100%;
+    padding: 1.5rem;
+    display: flex;
+    flex-flow: column;
+    align-items: flex-end; }
+  .container__queue {
+    width: 60%;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; }
 
 .intro__btn-holder {
   display: flex;
+  width: 100%;
   align-items: center;
-  justify-content: flex-end; }
-
-.queue__list {
-  list-style: none;
-  display: block; }
-
-.queue__item {
-  color: #00796b;
-  font-size: 1.2rem; }
+  justify-content: center; }
 
 .footer {
-  height: 10vh; }
+  height: 10vh;
+  padding-top: 2rem; }
+  .footer__author {
+    text-align: center;
+    color: #00bfa5;
+    font-size: 1.2rem; }
 
-.footer__author {
+body {
+  background: #27221c; }
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; }
+
+.table {
+  width: 100%;
+  border-spacing: 0;
+  padding: 1rem; }
+  .table__top {
+    background: #bf360c; }
+  .table__body {
+    background: #322d28; }
+  .table__heading {
+    text-align: center;
+    padding: 1rem; }
+  .table__item {
+    text-align: center;
+    padding: .5rem; }
+
+.verification {
+  height: 90vh;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); }
+  .verification__header {
+    height: 20%;
+    grid-column: span 2; }
+  .verification__heading {
+    height: 100%;
+    text-align: center;
+    padding-top: 1.5rem; }
+
+.login {
+  grid-column: 0/1; }
+  .login__heading {
+    text-align: center; }
+
+.credentials-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem; }
+  .credentials-form__input {
+    line-height: 1.2rem;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    transition: .3s ease;
+    background: none;
+    border: none;
+    box-shadow: 0 0 4px 2px #dd2c00;
+    margin: 1rem; }
+    .credentials-form__input:active, .credentials-form__input:focus {
+      outline: none;
+      box-shadow: 0 0 4px 2px #00bfa5; }
+
+.comm-info-details {
   text-align: center;
-  color: #00bfa5;
-  font-size: 1.2rem; }
+  font-size: 2.5rem;
+  color: #0097a7;
+  padding: 5rem;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  grid-column: 0/2;
+  width: 100%; }

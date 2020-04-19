@@ -10420,35 +10420,83 @@ module.exports = yeast;
 
 /***/ }),
 
-/***/ "./src/js/Classes/ConfigPanel.js":
-/*!***************************************!*\
-  !*** ./src/js/Classes/ConfigPanel.js ***!
-  \***************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
+/***/ "./src/js/Classes/VerificationView.js":
+/*!********************************************!*\
+  !*** ./src/js/Classes/VerificationView.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-
-
-/***/ }),
-
-/***/ "./src/js/Classes/ListItem.js":
-/*!************************************!*\
-  !*** ./src/js/Classes/ListItem.js ***!
-  \************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-
-
-/***/ }),
-
-/***/ "./src/js/Classes/Queue.js":
-/*!*********************************!*\
-  !*** ./src/js/Classes/Queue.js ***!
-  \*********************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VerificationPopup; });
+class VerificationPopup {
+    constructor(){
+        this.DOMElement;
+    }
+    build(){
+        this.DOMElement = `<main class="verification" id="verification-hook">
+        <header class="verification__header">
+          <h1 class="verification__heading">Welcome to AskIT Break Tracker. Please sign in or sign up.</h1>
+        </header>
+        <section class="login">
+          <header class="login__header">
+            <h2 class="login__heading">Sign in with your account</h2>
+          </header>
+          <section class="credentials-form" id="verification-login-form">
+            <label class="credentials-form__label" for="login-username">Your username</label>
+            <input type="text" class="credentials-form__input" id="login-username" minlength="5" maxlength="15">
+            <label class="credentials-form__label" for="login-password">Your password</label>
+            <input type="password" class="credentials-form__input" id="login-password" minlength="8" maxlength="15">
+            <button class="btn btn--success" id="login-submit">Sign in</button>
+          </section>
+        </section>
+        <section class="register">
+          <header class="register__header">
+            <h2 class="register__heading">Create new account</h2>
+            <ul class="requirements">
+              <li class="requirements__item">Password can contain only letters (both lower and upper case) and digits.</li>
+              <li class="requirements__item">Password must be at least 8 and maximum 15 characters long.</li>
+              <li class="requirements__item">Username can contain only letters (both lower and upper case).</li>
+              <li class="requirements__item">Username must be at least 5 and maximum 15 characters long.</li>
+            </ul>
+          </header>
+          <section class="credentials-form" id="verification-register-form">
+            <label class="credentials-form__label" for="register-username">Your username</label>
+            <input type="text" class="credentials-form__input" id="register-username" minlength="5" maxlength="15">
+            <label class="credentials-form__label" for="register-password">Your password</label>
+            <input type="password" class="credentials-form__input" id="register-password" minlength="8" maxlength="15">
+            <label class="credentials-form__label" for="register-password-confirm">Re-type your password</label>
+            <input type="password" class="credentials-form__input" id="register-password-confirm" minlength="8" maxlength="15">
+            <button class="btn btn--wrong" id="register-submit">Sign up</button>
+          </section>
+        </section>
+      </main>`
+    }
+    display(){
+        document.body.insertAdjacentHTML("afterbegin", this.DOMElement);
+        return {
+            parent: document.getElementById("verification-hook"),
+            login: {
+                username: document.getElementById("login-username"),
+                password: document.getElementById("login-password"),
+                submit: document.getElementById("login-submit"),
+            },
+            register: {
+                username: document.getElementById("register-username"),
+                password: document.getElementById("register-password"),
+                passwordConf: document.getElementById("register-password-confirm"),
+                submit: document.getElementById("register-submit"),
+            }
+        }
+    }
+    hide(){
+        const parent = document.getElementById("verification-hook");
+        if(parent){
+            document.body.removeChild(parent);
+        }
+    }
+};
 
 
 /***/ }),
@@ -10460,13 +10508,43 @@ module.exports = yeast;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-const ConfigPanel = __webpack_require__(/*! ./Classes/ConfigPanel.js */ "./src/js/Classes/ConfigPanel.js");
 const IOController = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
-const ListItem = __webpack_require__(/*! ./Classes/ListItem.js */ "./src/js/Classes/ListItem.js");
-const Queue = __webpack_require__(/*! ./Classes/Queue */ "./src/js/Classes/Queue.js");
+const VerificationView = __webpack_require__(/*! ./Classes/VerificationView.js */ "./src/js/Classes/VerificationView.js").default;
+// init
+socket = IOController.connect("http://localhost:3000/");
+function replaceWithInfo(info, element){
+    element.innerHTML = `<h3 id="signing-info" class="comm-info-details">${info}</h3>`;
+}
+socket.on("verify", (error)=>{
 
-const socket = IOController.connect('https://askit-break-scheduler.herokuapp.com/');
-
+    const loginWindow = new VerificationView();
+    loginWindow.hide();
+    loginWindow.build();
+    const verElements = loginWindow.display();
+    if(error.type){
+        alert(error.message);
+    }
+    verElements.parent.addEventListener("click", e=>{
+        switch(e.target){
+            case verElements.login.submit:
+                const loginDetails = {
+                    username: verElements.login.username.value,
+                    password: verElements.login.password.value
+                };
+                socket.emit("login-attempt", loginDetails);
+            break;
+            case verElements.register.submit:
+                const registerDetails = {
+                    username: verElements.register.username.value,
+                    password: verElements.register.password.value,
+                    passwordConfirmation: verElements.register.passwordConf.value
+                };
+                socket.emit("register-attempt", registerDetails);
+            break;
+            default: break;
+        }
+    });
+});
 
 
 /***/ }),

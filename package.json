@@ -16,6 +16,7 @@
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
+    "mysql": "^2.18.1",
     "node-sass": "^4.13.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"

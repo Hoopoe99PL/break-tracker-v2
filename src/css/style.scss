@@ -1,13 +1,13 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap');
-$color-white: #fff;
+$color-white: #e6e3d4;
 $color-primary: #0097a7;
 $color-success: #00796b;
 $color-wrong: #bf360c;
 $color-primary-light: #00b8d4;
 $color-success-light: #00bfa5;
 $color-wrong-light: #dd2c00;
-$color-dark: #212121;
+$color-dark: #27221c;
 $font-s-s: 0.5rem;
 $font-s-m: 1.2rem;
 $font-s-l: 2rem;
@@ -51,26 +51,26 @@ body{
         @include btn-hover;
     }
     margin: 5px;
-}
-.btn--primary{
-    background: $color-primary;
-    &:active,
-    &:focus{
-        @include btn-active($color-primary-light)
+    &--primary{
+        background: $color-primary;
+        &:active,
+        &:focus{
+            @include btn-active($color-primary-light)
+        }
     }
-}
-.btn--success{
-    background: $color-success;
-    &:active,
-    &:focus{
-        @include btn-active($color-success-light)
+    &--success{
+        background: $color-success;
+        &:active,
+        &:focus{
+            @include btn-active($color-success-light)
+        }
     }
-}
-.btn--wrong{
-    background: $color-wrong;
-    &:active,
-    &:focus{
-        @include btn-active($color-wrong-light)
+    &--wrong{
+        background: $color-wrong;
+        &:active,
+        &:focus{
+            @include btn-active($color-wrong-light)
+        }
     }
 }
 .welcome__header{
@@ -84,57 +84,116 @@ body{
     display: flex;
     flex-flow: row wrap;
     height: 80vh;
+    &__intro{
+        width: 40%;
+        height: 100%;
+        padding: 1.5rem;
+        display: flex;
+        flex-flow: column;
+        align-items: flex-end;
+    }
+    &__queue{
+        width: 60%;
+        height: 100%;
+        overflow-y: scroll;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 }
-.container__intro{
-    width: 40%;
-    height: 100%;
-    padding: 1.5rem;
-    display: flex;
-    flex-flow: column;
-    align-items: flex-end;
-}
-.container__queue{
-    width: 60%;
-    height: 100%;
-    overflow-y: scroll;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-.intro__heading{
-    font-size: $font-s-m;
-    font-weight: lighter;
-    padding: .5rem 1rem;
-}
-.intro__item{
-    display: inline-block;
-    text-align: center;
-    padding: .2rem 1rem;
-}
-.item--primary{
-    color: $color-primary;
-}
-.item--success{
-    color: $color-wrong;
-}
+
 .intro__btn-holder{
     display: flex;
+    width: 100%;
     align-items: center;
-    justify-content: flex-end;
-}
-.queue__list{
-    @include list-reset;
-}
-.queue__item{
-    color: $color-success;
-    font-size: $font-s-m;
+    justify-content: center;;
 }
 .footer{
     height: 10vh;
+    padding-top: 2rem;
+    &__author{
+        text-align: center;
+        color: $color-success-light;
+        font-size: $font-s-m;
+    }
 }
-.footer__author{
+body{
+    background: $color-dark;
+}
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+.table{
+    width: 100%;
+    border-spacing: 0;
+    padding: 1rem;
+    &__top{
+        background: #bf360c;
+    }
+    &__body{
+        background: #322d28;
+    }
+    &__heading{
+        text-align: center;
+        padding: 1rem;
+    }
+    &__item{
+        text-align: center;
+        padding: .5rem;
+    }
+}
+.verification{
+    height: 90vh;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    &__header{
+        height: 20%;
+        grid-column: span 2;
+    }
+    &__heading{
+        height: 100%;
+        text-align: center;
+        padding-top: 1.5rem;
+    }
+}
+.login{
+    grid-column: 0/1;
+    &__heading{
+        text-align: center;
+    }
+}
+.credentials-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem;
+    &__input{
+        line-height: $font-s-m;
+        font-size: $font-s-m;
+        padding: $font-s-s;
+        transition: .3s ease;
+        background: none;
+        border: none;
+        box-shadow: 0 0 4px 2px $color-wrong-light;
+        margin: 1rem;
+        &:active,
+        &:focus{
+            outline: none;
+            box-shadow: 0 0 4px 2px $color-success-light;
+        }
+    }
+}
+.comm-info-details{
     text-align: center;
-    color: $color-success-light;
-    font-size: $font-s-m;
+    font-size: $font-s-xl;
+    color: $color-primary;
+    padding: 5rem;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
