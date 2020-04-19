@@ -87,14 +87,13 @@ function getUserDetails(loginDetails, callback){
             if (err){
               return;
             }
-            const sql="INSERT INTO users (username, password, status) VALUES ?";
+            const sql="INSERT INTO users (username, password, status) VALUES (?)";
             const values = [registerDetails.username,registerDetails.password, "idle"];
-            console.log(connSocket);
             connSocket.query(sql, [values], (err, result)=>{
               if(err){
-                return;
+                console.log(err)
               }
-              console.log(result.affectedRows);
+              console.log(registerDetails.username + " registered correctly!");
             });
             connSocket.end();
           });
