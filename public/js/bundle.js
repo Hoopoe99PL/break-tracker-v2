@@ -10420,6 +10420,147 @@ module.exports = yeast;
 
 /***/ }),
 
+/***/ "./src/js/Classes/UserReservations.js":
+/*!********************************************!*\
+  !*** ./src/js/Classes/UserReservations.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return UserReservations; });
+class UserReservations {
+    constructor() {
+        this.DOMElement = {};
+    }
+    build() {
+        this.DOMElement.html =
+            `<header id="user-reservations-header" class="welcome">
+                <h1 class="welcome__header">Welcome to AskIT Break Tracker, pirate!</h1>
+             </header>
+            <main id="user-reservations-main" class="container">
+                <header class="container__intro">
+                    <table class="table">
+                        <thead class="table__top">
+                        <th class="table__heading">Max Breaks</th>
+                        <th class="table__heading">Username</th>
+                        <th class="table__heading">Current Status</th>
+                        <th class="table__heading">Mode</th>
+                        </thead>
+                        <tbody class="table__body">
+                        <tr class="table__row">
+                        <td id="config-slots" class="table__item">SLOTS</td>
+                        <td id="config-username" class="table__item">USERNAME</td>
+                        <td id="config-status" class="table__item">STATUS</td>
+                        <td id="config-mode" class="table__item">RESERVATIONS</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div id="status-buttons" class="intro__btn-holder">
+                        <button id="status-reserve" class="btn btn--primary">Reserve</button>
+                        <button id="status-break" class="btn btn--success">Break</button>
+                        <button id="status-cancel" class="btn btn--wrong">Cancel</button>
+                    </div>
+                </header>
+                <section class="container__queue">
+                    <table class="table">
+                        <thead class="table__top">
+                        <th class="table__heading">Username</th>
+                        <th class="table__heading">Current Status</th>
+                        <th class="table__heading">Last Status Change</th>
+                        </thead>
+                        <tbody id="queue-parent" class="table__body">
+
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+            <footer class="footer" id="user-reservations-footer">
+        <p class="footer__author">&copy; 2020 <a href="mailto:lukasz-dzierzawski@o2.pl">Contact</a>, <a href="https://www.linkedin.com/in/dzierzawski-lukasz/" target="_blank">LinkedIn - let's connect!</a> / <a href="https://github.com/Hoopoe99PL" target="_blank">GitHub - want to view the source code?</a></p>
+    </footer>`;
+        this.DOMElement.body = "user-reservations-main";
+        this.DOMElement.header = "user-reservations-header";
+        this.DOMElement.footer = "user-reservations-footer";
+    }
+    display() {
+        document.body.insertAdjacentHTML("afterbegin", this.DOMElement.html);
+    }
+    hide() {
+        const header = document.getElementById(this.DOMElement.header);
+        const body = document.getElementById(this.DOMElement.body);
+        const footer = document.getElementById(this.DOMElement.footer);
+        if (header) {
+            document.body.removeChild(header);
+        }
+        if (body) {
+            document.body.removeChild(body);
+        }
+        if (footer) {
+            document.body.removeChild(footer);
+        }
+    }
+    setUserViewConfig(slots, username, status) {
+        document.getElementById("config-slots").textContent = slots;
+        document.getElementById("config-username").textContent = username;
+        document.getElementById("config-status").textContent = status.toUpperCase();
+    }
+    renderQueue(queue) {
+        document.getElementById("queue-parent").innerHTML = "";
+        queue.forEach(e => {
+            const queueItemParent = document.createElement("tr");
+            queueItemParent.setAttribute("id", `queue-item-${e.idusers}`);
+            queueItemParent.setAttribute("class", "table__row");
+            const tdName = document.createElement("td");
+            tdName.setAttribute("id", `queue-username-${e.idusers}`)
+            tdName.setAttribute("class", "table__item");
+            tdName.textContent = e.username;
+            const tdStatus = document.createElement("td");
+            tdStatus.setAttribute("id", `queue-status-${e.status}`)
+            tdStatus.setAttribute("class", "table__item");
+            tdStatus.textContent = e.status;
+            const tdTimestamp = document.createElement("td");
+            tdTimestamp.setAttribute("id", `queue-timestamp-${e.statusTimestamp}`)
+            tdTimestamp.setAttribute("class", "table__item");
+            tdTimestamp.textContent = e.statusTimestamp;
+            queueItemParent.appendChild(tdName);
+            queueItemParent.appendChild(tdStatus);
+            queueItemParent.appendChild(tdTimestamp);
+            document.getElementById("queue-parent").appendChild(queueItemParent);
+        })
+        //     //users for each ...
+        //                     <td id="queue-username-" class="table__item">USERNAME</td>
+        //                     <td id="queue-status-" class="table__item">STATUS</td>
+        //                     <td id="queue-timestamp-" class="table__item">DATE</td>
+        //                     queue parent append child queue item
+        // }
+    };
+    getButtons() {
+        return {
+            btnsHolder: document.getElementById("status-buttons"),
+            reserve: document.getElementById("status-reserve"),
+            break: document.getElementById("status-break"),
+            cancel: document.getElementById("status-cancel"),
+        }
+    }
+    getCurrentDatetime() {
+        const date = new Date();
+        const year = date.getFullYear();
+        let month = date.getMonth();
+        if (month < 10) {
+            month = "0" + month;
+        }
+        let day = date.getDay()
+        if (day < 10) {
+            day = "0" + day;
+        }
+        const time = date.toLocaleTimeString();
+        return `${year}-${month}-${day} ${time}`;
+    }
+}
+
+/***/ }),
+
 /***/ "./src/js/Classes/VerificationView.js":
 /*!********************************************!*\
   !*** ./src/js/Classes/VerificationView.js ***!
@@ -10431,11 +10572,11 @@ module.exports = yeast;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return VerificationPopup; });
 class VerificationPopup {
-    constructor(){
-        this.DOMElement;
-    }
-    build(){
-        this.DOMElement = `<main class="verification" id="verification-hook">
+  constructor() {
+    this.DOMElement;
+  }
+  build() {
+    this.DOMElement = `<main class="verification" id="verification-hook">
         <header class="verification__header">
           <h1 class="verification__heading">Welcome to AskIT Break Tracker. Please sign in or sign up.</h1>
         </header>
@@ -10443,6 +10584,7 @@ class VerificationPopup {
           <header class="login__header">
             <h2 class="login__heading">Sign in with your account</h2>
           </header>
+          <div class="form--toLeft">
           <section class="credentials-form" id="verification-login-form">
             <label class="credentials-form__label" for="login-username">Your username</label>
             <input type="text" class="credentials-form__input" id="login-username" minlength="5" maxlength="15">
@@ -10450,6 +10592,7 @@ class VerificationPopup {
             <input type="password" class="credentials-form__input" id="login-password" minlength="8" maxlength="15">
             <button class="btn btn--success" id="login-submit">Sign in</button>
           </section>
+          </div>
         </section>
         <section class="register">
           <header class="register__header">
@@ -10461,7 +10604,7 @@ class VerificationPopup {
               <li class="requirements__item">Username must be at least 5 and maximum 15 characters long.</li>
             </ul>
           </header>
-          <section class="credentials-form" id="verification-register-form">
+          <section class="credentials-form form--toLeft" id="verification-register-form">
             <label class="credentials-form__label" for="register-username">Your username</label>
             <input type="text" class="credentials-form__input" id="register-username" minlength="5" maxlength="15">
             <label class="credentials-form__label" for="register-password">Your password</label>
@@ -10471,31 +10614,34 @@ class VerificationPopup {
             <button class="btn btn--wrong" id="register-submit">Sign up</button>
           </section>
         </section>
+        <footer class="footer">
+        <p class="footer__author">&copy; 2020 <a href="mailto:lukasz-dzierzawski@o2.pl">Contact</a>, <a href="https://www.linkedin.com/in/dzierzawski-lukasz/" target="_blank">LinkedIn - let's connect!</a> / <a href="https://github.com/Hoopoe99PL" target="_blank">GitHub - want to view the source code?</a></p>
+    </footer>
       </main>`
+  }
+  display() {
+    document.body.insertAdjacentHTML("afterbegin", this.DOMElement);
+    return {
+      parent: document.getElementById("verification-hook"),
+      login: {
+        username: document.getElementById("login-username"),
+        password: document.getElementById("login-password"),
+        submit: document.getElementById("login-submit"),
+      },
+      register: {
+        username: document.getElementById("register-username"),
+        password: document.getElementById("register-password"),
+        passwordConf: document.getElementById("register-password-confirm"),
+        submit: document.getElementById("register-submit"),
+      }
     }
-    display(){
-        document.body.insertAdjacentHTML("afterbegin", this.DOMElement);
-        return {
-            parent: document.getElementById("verification-hook"),
-            login: {
-                username: document.getElementById("login-username"),
-                password: document.getElementById("login-password"),
-                submit: document.getElementById("login-submit"),
-            },
-            register: {
-                username: document.getElementById("register-username"),
-                password: document.getElementById("register-password"),
-                passwordConf: document.getElementById("register-password-confirm"),
-                submit: document.getElementById("register-submit"),
-            }
-        }
+  }
+  hide() {
+    const parent = document.getElementById("verification-hook");
+    if (parent) {
+      document.body.removeChild(parent);
     }
-    hide(){
-        const parent = document.getElementById("verification-hook");
-        if(parent){
-            document.body.removeChild(parent);
-        }
-    }
+  }
 };
 
 
@@ -10510,29 +10656,30 @@ class VerificationPopup {
 
 const IOController = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
 const VerificationView = __webpack_require__(/*! ./Classes/VerificationView.js */ "./src/js/Classes/VerificationView.js").default;
+const UserReservations = __webpack_require__(/*! ./Classes/UserReservations.js */ "./src/js/Classes/UserReservations.js").default;
 // init
-socket = IOController.connect("http://localhost:3000/");
-function replaceWithInfo(info, element){
+const socket = IOController.connect("http://localhost:3000/");
+function replaceWithInfo(info, element) {
     element.innerHTML = `<h3 id="signing-info" class="comm-info-details">${info}</h3>`;
 }
-socket.on("verify", (error)=>{
-
-    const loginWindow = new VerificationView();
+const loginWindow = new VerificationView();
+const userReservationsView = new UserReservations();
+socket.on("verify", (error) => {
     loginWindow.hide();
     loginWindow.build();
     const verElements = loginWindow.display();
-    if(error.type){
+    if (error.type) {
         alert(error.message);
     }
-    verElements.parent.addEventListener("click", e=>{
-        switch(e.target){
+    verElements.parent.addEventListener("click", e => {
+        switch (e.target) {
             case verElements.login.submit:
                 const loginDetails = {
                     username: verElements.login.username.value,
                     password: verElements.login.password.value
                 };
                 socket.emit("login-attempt", loginDetails);
-            break;
+                break;
             case verElements.register.submit:
                 const registerDetails = {
                     username: verElements.register.username.value,
@@ -10540,11 +10687,40 @@ socket.on("verify", (error)=>{
                     passwordConfirmation: verElements.register.passwordConf.value
                 };
                 socket.emit("register-attempt", registerDetails);
-            break;
+                break;
             default: break;
         }
     });
 });
+socket.on("registered", () => {
+    alert("Account registered correctly, you can now sign in.")
+});
+socket.on("logged-as-user-m-reservations", handshakeData => {
+    loginWindow.hide();
+    userReservationsView.build();
+    userReservationsView.display();
+    userReservationsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
+    const userResHandlers = userReservationsView.getButtons();
+    userResHandlers.btnsHolder.addEventListener("click", e => {
+        switch (e.target) {
+            case userResHandlers.reserve:
+                socket.emit("reserve-break", userReservationsView.getCurrentDatetime());
+                break;
+            case userResHandlers.break:
+                socket.emit("take-break", userReservationsView.getCurrentDatetime());
+                break;
+            case userResHandlers.cancel:
+                socket.emit("cancel-status", userReservationsView.getCurrentDatetime());
+                break;
+        }
+    })
+})
+socket.on("queue-delivery", queueList => {
+    userReservationsView.renderQueue(queueList);
+});
+
+
+//user reservations event handlers
 
 
 /***/ }),

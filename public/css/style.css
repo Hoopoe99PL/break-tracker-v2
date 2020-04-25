@@ -45,18 +45,18 @@ body {
   height: 10vh; }
 
 .container {
-  display: flex;
-  flex-flow: row wrap;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
   height: 80vh; }
   .container__intro {
-    width: 40%;
+    grid-column: span 4;
     height: 100%;
     padding: 1.5rem;
     display: flex;
     flex-flow: column;
     align-items: flex-end; }
   .container__queue {
-    width: 60%;
+    grid-column: span 6;
     height: 100%;
     overflow-y: scroll;
     padding: 1.5rem;
@@ -72,7 +72,8 @@ body {
 
 .footer {
   height: 10vh;
-  padding-top: 2rem; }
+  padding-top: 2rem;
+  grid-column: span 2; }
   .footer__author {
     text-align: center;
     color: #00bfa5;
@@ -102,7 +103,7 @@ body {
     padding: .5rem; }
 
 .verification {
-  height: 90vh;
+  height: 100vh;
   display: grid;
   grid-template-columns: repeat(2, 1fr); }
   .verification__header {
@@ -118,10 +119,17 @@ body {
   .login__heading {
     text-align: center; }
 
+.register__heading {
+  margin-bottom: 2rem; }
+
+.form--toLeft {
+  display: flex;
+  justify-content: center; }
+
 .credentials-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   margin-top: 2rem; }
   .credentials-form__input {
@@ -145,6 +153,7 @@ body {
   position: relative;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  grid-column: 0/2;
-  width: 100%; }
+  transform: translate(-50%, -50%); }
+
+.requirements {
+  list-style-position: inside; }

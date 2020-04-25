@@ -1,28 +1,29 @@
 const IOController = require("socket.io-client");
 const VerificationView = require("./Classes/VerificationView.js").default;
+const UserReservations = require("./Classes/UserReservations.js").default;
 // init
-socket = IOController.connect("http://localhost:3000/");
-function replaceWithInfo(info, element){
+const socket = IOController.connect("http://localhost:3000/");
+function replaceWithInfo(info, element) {
     element.innerHTML = `<h3 id="signing-info" class="comm-info-details">${info}</h3>`;
 }
-socket.on("verify", (error)=>{
-
-    const loginWindow = new VerificationView();
+const loginWindow = new VerificationView();
+const userReservationsView = new UserReservations();
+socket.on("verify", (error) => {
     loginWindow.hide();
     loginWindow.build();
     const verElements = loginWindow.display();
-    if(error.type){
+    if (error.type) {
         alert(error.message);
     }
-    verElements.parent.addEventListener("click", e=>{
-        switch(e.target){
+    verElements.parent.addEventListener("click", e => {
+        switch (e.target) {
             case verElements.login.submit:
                 const loginDetails = {
                     username: verElements.login.username.value,
                     password: verElements.login.password.value
                 };
                 socket.emit("login-attempt", loginDetails);
-            break;
+                break;
             case verElements.register.submit:
                 const registerDetails = {
                     username: verElements.register.username.value,
@@ -30,8 +31,37 @@ socket.on("verify", (error)=>{
                     passwordConfirmation: verElements.register.passwordConf.value
                 };
                 socket.emit("register-attempt", registerDetails);
-            break;
+                break;
             default: break;
         }
     });
 });
+socket.on("registered", () => {
+    alert("Account registered correctly, you can now sign in.")
+});
+socket.on("logged-as-user-m-reservations", handshakeData => {
+    loginWindow.hide();
+    userReservationsView.build();
+    userReservationsView.display();
+    userReservationsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
+    const userResHandlers = userReservationsView.getButtons();
+    userResHandlers.btnsHolder.addEventListener("click", e => {
+        switch (e.target) {
+            case userResHandlers.reserve:
+                socket.emit("reserve-break", userReservationsView.getCurrentDatetime());
+                break;
+            case userResHandlers.break:
+                socket.emit("take-break", userReservationsView.getCurrentDatetime());
+                break;
+            case userResHandlers.cancel:
+                socket.emit("cancel-status", userReservationsView.getCurrentDatetime());
+                break;
+        }
+    })
+})
+socket.on("queue-delivery", queueList => {
+    userReservationsView.renderQueue(queueList);
+});
+
+
+//user reservations event handlers
