@@ -44,6 +44,7 @@ io.on("connection", (socket) => {
       user: "b0113bbe0415f7",
       password: "123cac7b",
       database: "heroku_b239941e19f397d",
+      dateStrings: "date",
     };
     clientConn = mysql.createConnection(dbCfg);
     return clientConn;
@@ -64,12 +65,12 @@ io.on("connection", (socket) => {
       if (err) {
         return;
       }
-      connSocket.query(`SELECT * FROM users WHERE status IN ("break", "reserve", "requested") ORDER BY UNIX_TIMESTAMP(statusTimestamp) ASC, status DESC`, (err, result) => {
+      connSocket.query(`SELECT * FROM users WHERE status IN ("break", "reserve", "requested") ORDER BY status ASC, UNIX_TIMESTAMP(statusTimestamp) ASC`, (err, result) => {
         if (err) {
           console.log(err);
           return;
         }
-        socket.emit("queue-delivery", result);
+        io.emit("queue-delivery", result);
       });
       connSocket.end();
     });
@@ -91,7 +92,26 @@ io.on("connection", (socket) => {
         return;
       }
       const sql = `UPDATE users SET status="${status}", statusTimestamp="${timestamp}" WHERE username="${user}"`;
+      socket.emit("update-user-config", { slots: allowedSlots, mode: breakMode, username: user, status: status })
       connSocket.query(sql, callback);
+      connSocket.end();
+    });
+  }
+  function breakIfAvailable(allowedSlots, user, timestamp, sendQueueToUser, changeStatus) {
+    const connSocket = getDbConnectionSocket();
+    connSocket.connect(err => {
+      if (err) {
+        return;
+      }
+      connSocket.query(`SELECT * FROM users WHERE status="break"`, (err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        if (res.length < allowedSlots) {
+          changeStatus(user, sendQueueToUser, "break", timestamp);
+        }
+      });
       connSocket.end();
     });
   }
@@ -164,11 +184,27 @@ io.on("connection", (socket) => {
   });
   socket.on("reserve-break", (timestamp) => {
     const user = getUserWithSocket(socket.id);
-    changeStatus(user, sendQueueToUser, "reserve", timestamp);
+    getUserDetails({ username: user }, (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      if (res[0].status !== "reserve") {
+        changeStatus(user, sendQueueToUser, "reserve", timestamp);
+      }
+    })
   });
   socket.on("take-break", (timestamp) => {
     const user = getUserWithSocket(socket.id);
-    changeStatus(user, sendQueueToUser, "break", timestamp);
+    getUserDetails({ username: user }, (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      if (res[0].status === "reserve") {
+        breakIfAvailable(allowedSlots, user, timestamp, sendQueueToUser, changeStatus);
+      }
+    })
   });
   socket.on("cancel-status", (timestamp) => {
     const user = getUserWithSocket(socket.id);

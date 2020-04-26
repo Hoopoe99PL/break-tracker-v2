@@ -62,6 +62,12 @@ socket.on("logged-as-user-m-reservations", handshakeData => {
 socket.on("queue-delivery", queueList => {
     userReservationsView.renderQueue(queueList);
 });
+socket.on("update-user-config", config => {
+    document.getElementById("config-slots").textContent = config.slots;
+    document.getElementById("config-status").textContent = config.status;
+    document.getElementById("config-username").textContent = config.username;
+    document.getElementById("config-mode").textContent = config.mode;
+})
 
 
 //user reservations event handlers

@@ -96,12 +96,6 @@ export default class UserReservations {
             queueItemParent.appendChild(tdTimestamp);
             document.getElementById("queue-parent").appendChild(queueItemParent);
         })
-        //     //users for each ...
-        //                     <td id="queue-username-" class="table__item">USERNAME</td>
-        //                     <td id="queue-status-" class="table__item">STATUS</td>
-        //                     <td id="queue-timestamp-" class="table__item">DATE</td>
-        //                     queue parent append child queue item
-        // }
     };
     getButtons() {
         return {
@@ -113,16 +107,21 @@ export default class UserReservations {
     }
     getCurrentDatetime() {
         const date = new Date();
+        console.log(date)
         const year = date.getFullYear();
-        let month = date.getMonth();
+        let month = date.getMonth() + 1;
         if (month < 10) {
             month = "0" + month;
         }
-        let day = date.getDay()
+        console.log(month);
+        let day = date.getDate();
+        console.log(typeof day);
         if (day < 10) {
             day = "0" + day;
         }
+        console.log(day)
         const time = date.toLocaleTimeString();
+        console.log(`${year}-${month}-${day} ${time}`)
         return `${year}-${month}-${day} ${time}`;
     }
 }
