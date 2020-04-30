@@ -72,6 +72,9 @@ body{
             @include btn-active($color-wrong-light)
         }
     }
+    &--static{
+        display: inline-block;
+    }
 }
 .welcome__header{
     font-size: $font-s-xl;
@@ -209,4 +212,39 @@ body{
 }
 .requirements{
     list-style-position: inside;
+}
+.adm-reservations{
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    &__heading{
+        margin-top: 1.5rem;
+        font-size: $font-s-xl;
+        text-align: center;
+        width: 100%;
+    }
+    &__ctrl-group{
+        width: 50%;
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+        padding: 3rem;
+    }
+    &__slotsinpt{
+        line-height: $font-s-m;
+        font-size: $font-s-m;
+        padding: $font-s-s;
+        transition: .3s ease;
+        background: none;
+        border: none;
+        box-shadow: 0 0 4px 2px $color-wrong-light;
+        margin: 1rem;
+        &:active,
+        &:focus{
+            outline: none;
+            box-shadow: 0 0 4px 2px $color-success-light;
+        }
+    }
 }

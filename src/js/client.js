@@ -1,6 +1,7 @@
 const IOController = require("socket.io-client");
 const VerificationView = require("./Classes/VerificationView.js").default;
 const UserReservations = require("./Classes/UserReservations.js").default;
+const AdmPanel = require("./Classes/AdmPanel.js").default;
 // init
 const socket = IOController.connect("http://localhost:3000/");
 function replaceWithInfo(info, element) {
@@ -8,6 +9,7 @@ function replaceWithInfo(info, element) {
 }
 const loginWindow = new VerificationView();
 const userReservationsView = new UserReservations();
+const admView = new AdmPanel();
 socket.on("verify", (error) => {
     loginWindow.hide();
     loginWindow.build();
@@ -40,7 +42,7 @@ socket.on("registered", () => {
     alert("Account registered correctly, you can now sign in.")
 });
 socket.on("logged-as-user-m-reservations", handshakeData => {
-    loginWindow.hide();
+    document.body.innerHTML = "";
     userReservationsView.build();
     userReservationsView.display();
     userReservationsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
@@ -59,14 +61,48 @@ socket.on("logged-as-user-m-reservations", handshakeData => {
         }
     })
 })
+socket.on("logged-as-adm-m-reservations", handshakeData => {
+    document.body.innerHTML = "";
+    userReservationsView.build();
+    userReservationsView.display();
+    userReservationsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
+    admView.build();
+    admView.display();
+    const adm = {};
+    adm.inputs = admView.getInputs();
+    adm.buttons = admView.getButtons();
+    adm.inputs.parent.addEventListener("click", e => {
+        switch (e.target) {
+            case adm.buttons.mode.requests:
+
+                break;
+            case adm.buttons.mode.reservations:
+
+                break;
+            case adm.buttons.slots:
+
+                break;
+            case adm.buttons.queue.decline:
+
+                break;
+            case adm.buttons.queue.submit:
+
+                break;
+            case adm.buttons.adm:
+
+                break;
+            default: break;
+        }
+    })
+
+})
 socket.on("queue-delivery", queueList => {
     userReservationsView.renderQueue(queueList);
 });
 socket.on("update-user-config", config => {
-    document.getElementById("config-slots").textContent = config.slots;
-    document.getElementById("config-status").textContent = config.status;
-    document.getElementById("config-username").textContent = config.username;
-    document.getElementById("config-mode").textContent = config.mode;
+    if (config.mode === "reservations") {
+        userReservationsView.setUserViewConfig(config.slots, config.username, config.status);
+    }
 })
 
 

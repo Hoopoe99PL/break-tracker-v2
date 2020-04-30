@@ -36,6 +36,8 @@ body {
     .btn--wrong:active, .btn--wrong:focus {
       outline: none;
       box-shadow: 0 0 5px 3px #dd2c00; }
+  .btn--static {
+    display: inline-block; }
 
 .welcome__header {
   font-size: 2.5rem;
@@ -157,3 +159,33 @@ body {
 
 .requirements {
   list-style-position: inside; }
+
+.adm-reservations {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center; }
+  .adm-reservations__heading {
+    margin-top: 1.5rem;
+    font-size: 2.5rem;
+    text-align: center;
+    width: 100%; }
+  .adm-reservations__ctrl-group {
+    width: 50%;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem; }
+  .adm-reservations__slotsinpt {
+    line-height: 1.2rem;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    transition: .3s ease;
+    background: none;
+    border: none;
+    box-shadow: 0 0 4px 2px #dd2c00;
+    margin: 1rem; }
+    .adm-reservations__slotsinpt:active, .adm-reservations__slotsinpt:focus {
+      outline: none;
+      box-shadow: 0 0 4px 2px #00bfa5; }

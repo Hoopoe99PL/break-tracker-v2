@@ -10420,6 +10420,85 @@ module.exports = yeast;
 
 /***/ }),
 
+/***/ "./src/js/Classes/AdmPanel.js":
+/*!************************************!*\
+  !*** ./src/js/Classes/AdmPanel.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return AdmPanel; });
+class AdmPanel {
+    constructor() {
+        this.HTMLElement;
+    }
+    build() {
+        this.HTMLElement =
+            `<section class="adm-reservations" id="adm-reservations-panel">
+                <h3 class="adm-reservations__heading">Admin panel</h3>
+                <div id="btns-mode-container" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Choose mode:</h4>
+                <button id="mode-requests" class="btn btn--primary btn--static">Switch Mode to REQUESTS</button>
+                <button id="mode-reservations" class="btn btn--success btn--static">Switch Mode to RESERVATIONS</button>
+                </div>
+                <div id="btns-slots-container" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Change amount of available break slots:</h4>
+                <input type="number" id="change-slots-amount" class="adm-reservations__slotsinpt">
+                <button id="change-slots-submit" class="btn btn--success">Update Slots</button>
+                </div>
+                <div id="btns-kick-reject-container" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Remove user from queue or reject a break request:</h4>
+                <label for="queue-removal-username" class="credentials-form__label">Provide exact username of the user to confirm your decision</label>
+                <input type="text" id="queue-removal-username" class="credentials-form__input">
+                <button id="kick-f-queue" class="btn btn--wrong">Remove/Reject</button>
+                </div>
+                <div id="btns-add-accept-container" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Add user to queue or accept a request:</h4>
+                <label for="queue-add-username" class="credentials-form__label">Provide exact username of the user to confirm your decision</label>
+                <input type="text" id="queue-add-username" class="credentials-form__input">
+                <button id="add-to-queue" class="btn btn--success">Add/Accept</button>
+                </div>
+                <div id="btns-add-as-admin-container" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Change user to Admin:</h4>
+                <label for="queue-add-username" class="credentials-form__label">Provide exact username of the user to confirm your decision</label>
+                <input type="text" id="add-adm" class="credentials-form__input">
+                <button id="add-to-adm" class="btn btn--success">Add</button>
+                </div>
+            </section>`
+    }
+    display() {
+        document.body.insertAdjacentHTML("beforeend", this.HTMLElement);
+    }
+    getButtons() {
+        return {
+            parent: document.getElementById("adm-reservations-panel"),
+            mode: {
+                requests: document.getElementById("mode-requests"),
+                reservations: document.getElementById("mode-reservations"),
+            },
+            slots: document.getElementById("change-slots-submit"),
+            queue: {
+                submit: document.getElementById("add-to-queue"),
+                decline: document.getElementById("kick-f-queue"),
+            },
+            adm: document.getElementById("add-to-adm"),
+        }
+    }
+    getInputs() {
+        return {
+            parent: document.getElementById("adm-reservations-panel"),
+            slots: document.getElementById("change-slots-amount"),
+            acceptance: document.getElementById("queue-add-username"),
+            reject: document.getElementById("queue-removal-username"),
+            adm: document.getElementById("add-adm"),
+        }
+    }
+}
+
+/***/ }),
+
 /***/ "./src/js/Classes/UserReservations.js":
 /*!********************************************!*\
   !*** ./src/js/Classes/UserReservations.js ***!
@@ -10656,6 +10735,7 @@ class VerificationPopup {
 const IOController = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
 const VerificationView = __webpack_require__(/*! ./Classes/VerificationView.js */ "./src/js/Classes/VerificationView.js").default;
 const UserReservations = __webpack_require__(/*! ./Classes/UserReservations.js */ "./src/js/Classes/UserReservations.js").default;
+const AdmPanel = __webpack_require__(/*! ./Classes/AdmPanel.js */ "./src/js/Classes/AdmPanel.js").default;
 // init
 const socket = IOController.connect("http://localhost:3000/");
 function replaceWithInfo(info, element) {
@@ -10663,6 +10743,7 @@ function replaceWithInfo(info, element) {
 }
 const loginWindow = new VerificationView();
 const userReservationsView = new UserReservations();
+const admView = new AdmPanel();
 socket.on("verify", (error) => {
     loginWindow.hide();
     loginWindow.build();
@@ -10695,7 +10776,7 @@ socket.on("registered", () => {
     alert("Account registered correctly, you can now sign in.")
 });
 socket.on("logged-as-user-m-reservations", handshakeData => {
-    loginWindow.hide();
+    document.body.innerHTML = "";
     userReservationsView.build();
     userReservationsView.display();
     userReservationsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
@@ -10714,14 +10795,50 @@ socket.on("logged-as-user-m-reservations", handshakeData => {
         }
     })
 })
+socket.on("logged-as-adm-m-reservations", handshakeData => {
+    document.body.innerHTML = "";
+    userReservationsView.build();
+    userReservationsView.display();
+    userReservationsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
+    admView.build();
+    admView.display();
+    const adm = {};
+    adm.inputs = admView.getInputs();
+    adm.buttons = admView.getButtons();
+    console.log(adm);
+    console.log(admView);
+    adm.inputs.parent.addEventListener("click", e => {
+        switch (e.target) {
+            case adm.buttons.mode.requests:
+
+                break;
+            case adm.buttons.mode.reservations:
+
+                break;
+            case adm.buttons.slots:
+
+                break;
+            case adm.buttons.queue.decline:
+
+                break;
+            case adm.buttons.queue.submit:
+
+                break;
+            case adm.buttons.adm:
+
+                break;
+            default: break;
+        }
+    })
+
+})
 socket.on("queue-delivery", queueList => {
     userReservationsView.renderQueue(queueList);
 });
 socket.on("update-user-config", config => {
-    document.getElementById("config-slots").textContent = config.slots;
-    document.getElementById("config-status").textContent = config.status;
-    document.getElementById("config-username").textContent = config.username;
-    document.getElementById("config-mode").textContent = config.mode;
+    if (config.mode === "reservations") {
+        userReservationsView.setUserViewConfig(config.slots, config.username, config.status);
+    }
 })
 
 
