@@ -4,10 +4,10 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http, { cookie: false });
 const fs = require('fs');
 const mysql = require("mysql");
-const bcrypt = require('bcrypt');
+let passcode = "AskIT2020";
 const usernameRegEx = /^[a-zA-Z]{5,15}$/;
 const passwordRegEx = /^[a-zA-Z0-9]{8,15}$/;
-const breakMode = "reservations";
+const breakMode = "requests";
 let allowedSlots = 2;
 const loggedInUsers = new Map();
 
@@ -70,7 +70,7 @@ io.on("connection", (socket) => {
           console.log(err);
           return;
         }
-        io.emit("queue-delivery", result);
+        io.emit("queue-delivery", { queue: result, mode: breakMode });
       });
       connSocket.end();
     });
@@ -115,69 +115,50 @@ io.on("connection", (socket) => {
       connSocket.end();
     });
   }
+  function insertNewUser(loginDetails) {
+    const connSocket = getDbConnectionSocket();
+    connSocket.connect(err => {
+      if (err) {
+        return;
+      }
+      const sql = "INSERT INTO users (username, status, usersType) VALUES (?)";
+      const values = [loginDetails.username, "idle", "user"];
+      connSocket.query(sql, [values], (err, result) => {
+        if (err) {
+          console.log(err)
+          return;
+        } else {
+          console.log(loginDetails.username + " registered correctly!");
+          connSocket.end();
+          socket.emit("verify", { type: true, message: "Seems like it you are new, we have created new space for you, log in again to confirm your username and prove you know the passcode." })
+        }
+      });
+    });
+  }
   socket.emit("verify", { type: false, message: "" });
   socket.on("login-attempt", loginDetails => {
-    if (!usernameRegEx.test(loginDetails.username) || !passwordRegEx.test(loginDetails.password)) {
-      socket.emit("verify", { type: true, message: "Incorrect username or password" });
+    if (!usernameRegEx.test(loginDetails.username) || !passwordRegEx.test(loginDetails.password) || loginDetails.password !== passcode) {
+      socket.emit("verify", { type: true, message: "Username does not meet the criteria or wrong passcode, mate!" });
     } else {
       getUserDetails(loginDetails, (err, result) => {
         if (err) {
           return;
         }
         if (result.length < 1) {
-          socket.emit("verify", { type: true, message: "No such user." });
-          return;
-        }
+          insertNewUser(loginDetails);
 
-        bcrypt.compare(loginDetails.password, result[0].password, function (err, boolean) {
+        } else {
           if (err) {
             console.log(err);
             return;
           }
-          if (boolean) {
-            loggedInUsers.set(loginDetails.username, socket.id);
-            socket.emit(`logged-as-${result[0].usersType}-m-${breakMode}`, { userData: result[0], slots: allowedSlots });
-            sendQueueToUser();
 
-          } else {
-            socket.emit("verify", { type: true, message: "Incorrect username or password" });
+          loggedInUsers.set(loginDetails.username, socket.id);
+          socket.emit(`logged-m-${breakMode}`, { userData: result[0], slots: allowedSlots });
+          sendQueueToUser();
+          if (result[0].usersType === "adm") {
+            socket.emit("logged-as-adm")
           }
-        });
-      })
-    }
-  });
-
-  socket.on("register-attempt", registerDetails => {
-    if (!usernameRegEx.test(registerDetails.username) || !passwordRegEx.test(registerDetails.password) || registerDetails.password !== registerDetails.passwordConfirmation) {
-      socket.emit("verify", { type: true, message: "Incorrect username or password" });
-    } else {
-      getUserDetails(registerDetails, (err, result) => {
-        if (err) {
-          return;
-        }
-        if (result.length > 0) {
-          socket.emit("verify", { type: true, message: "Username taken" });
-        } else {
-          const connSocket = getDbConnectionSocket();
-          connSocket.connect(err => {
-            if (err) {
-              return;
-            }
-            const sql = "INSERT INTO users (username, password, status, usersType) VALUES (?)";
-            const passwordPlain = registerDetails.password;
-            bcrypt.hash(passwordPlain, 10).then(function (hash) {
-              const values = [registerDetails.username, hash, "idle", "user"];
-              connSocket.query(sql, [values], (err, result) => {
-                if (err) {
-                  console.log(err)
-                } else {
-                  console.log(registerDetails.username + " registered correctly!");
-                  socket.emit("registered");
-                  connSocket.end();
-                }
-              });
-            });
-          });
         }
       })
     }
@@ -191,6 +172,18 @@ io.on("connection", (socket) => {
       }
       if (res[0].status !== "reserve") {
         changeStatus(user, sendQueueToUser, "reserve", timestamp);
+      }
+    })
+  });
+  socket.on("request-break", (timestamp) => {
+    const user = getUserWithSocket(socket.id);
+    getUserDetails({ username: user }, (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      if (res[0].status !== "requested") {
+        changeStatus(user, sendQueueToUser, "requested", timestamp);
       }
     })
   });

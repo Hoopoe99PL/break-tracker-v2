@@ -74,8 +74,7 @@ body {
 
 .footer {
   height: 10vh;
-  padding-top: 2rem;
-  grid-column: span 2; }
+  padding-top: 2rem; }
   .footer__author {
     text-align: center;
     color: #00bfa5;
@@ -105,28 +104,21 @@ body {
     padding: .5rem; }
 
 .verification {
-  height: 100vh;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); }
+  height: 90vh; }
   .verification__header {
-    height: 20%;
-    grid-column: span 2; }
+    height: 20%; }
   .verification__heading {
     height: 100%;
     text-align: center;
     padding-top: 1.5rem; }
 
 .login {
-  grid-column: 0/1; }
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center; }
   .login__heading {
     text-align: center; }
-
-.register__heading {
-  margin-bottom: 2rem; }
-
-.form--toLeft {
-  display: flex;
-  justify-content: center; }
 
 .credentials-form {
   display: flex;

@@ -5,7 +5,7 @@ export default class UserReservations {
     build() {
         this.DOMElement.html =
             `<header id="user-reservations-header" class="welcome">
-                <h1 class="welcome__header">Welcome to AskIT Break Tracker, pirate!</h1>
+                <h1 class="welcome__header">Welcome to Break Tracker, pirate!</h1>
              </header>
             <main id="user-reservations-main" class="container">
                 <header class="container__intro">
@@ -107,21 +107,16 @@ export default class UserReservations {
     }
     getCurrentDatetime() {
         const date = new Date();
-        console.log(date)
         const year = date.getFullYear();
         let month = date.getMonth() + 1;
         if (month < 10) {
             month = "0" + month;
         }
-        console.log(month);
         let day = date.getDate();
-        console.log(typeof day);
         if (day < 10) {
             day = "0" + day;
         }
-        console.log(day)
         const time = date.toLocaleTimeString();
-        console.log(`${year}-${month}-${day} ${time}`)
         return `${year}-${month}-${day} ${time}`;
     }
 }

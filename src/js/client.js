@@ -1,7 +1,8 @@
 const IOController = require("socket.io-client");
-const VerificationView = require("./Classes/VerificationView.js").default;
-const UserReservations = require("./Classes/UserReservations.js").default;
-const AdmPanel = require("./Classes/AdmPanel.js").default;
+const VerificationView = require("./Views/VerificationView.js").default;
+const UserReservations = require("./Views/UserReservations.js").default;
+const UserRequests = require("./Views/UserRequests.js").default;
+const AdmPanel = require("./Views/AdmPanel.js").default;
 // init
 const socket = IOController.connect("http://localhost:3000/");
 function replaceWithInfo(info, element) {
@@ -10,38 +11,25 @@ function replaceWithInfo(info, element) {
 const loginWindow = new VerificationView();
 const userReservationsView = new UserReservations();
 const admView = new AdmPanel();
+const requestsView = new UserRequests();
 socket.on("verify", (error) => {
-    loginWindow.hide();
+    document.body.innerHTML = "";
     loginWindow.build();
     const verElements = loginWindow.display();
     if (error.type) {
         alert(error.message);
     }
     verElements.parent.addEventListener("click", e => {
-        switch (e.target) {
-            case verElements.login.submit:
-                const loginDetails = {
-                    username: verElements.login.username.value,
-                    password: verElements.login.password.value
-                };
-                socket.emit("login-attempt", loginDetails);
-                break;
-            case verElements.register.submit:
-                const registerDetails = {
-                    username: verElements.register.username.value,
-                    password: verElements.register.password.value,
-                    passwordConfirmation: verElements.register.passwordConf.value
-                };
-                socket.emit("register-attempt", registerDetails);
-                break;
-            default: break;
+        if (e.target === verElements.login.submit) {
+            const loginDetails = {
+                username: verElements.login.username.value,
+                password: verElements.login.password.value
+            };
+            socket.emit("login-attempt", loginDetails);
         }
     });
 });
-socket.on("registered", () => {
-    alert("Account registered correctly, you can now sign in.")
-});
-socket.on("logged-as-user-m-reservations", handshakeData => {
+socket.on("logged-m-reservations", handshakeData => {
     document.body.innerHTML = "";
     userReservationsView.build();
     userReservationsView.display();
@@ -58,14 +46,29 @@ socket.on("logged-as-user-m-reservations", handshakeData => {
             case userResHandlers.cancel:
                 socket.emit("cancel-status", userReservationsView.getCurrentDatetime());
                 break;
+            default: break;
         }
     })
 })
-socket.on("logged-as-adm-m-reservations", handshakeData => {
+socket.on("logged-m-requests", handshakeData => {
     document.body.innerHTML = "";
-    userReservationsView.build();
-    userReservationsView.display();
-    userReservationsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
+    requestsView.build();
+    requestsView.display();
+    requestsView.setUserViewConfig(handshakeData.slots, handshakeData.userData.username, handshakeData.userData.status);
+    const userReqHandlers = requestsView.getButtons();
+    userReqHandlers.btnsHolder.addEventListener("click", e => {
+        switch (e.target) {
+            case userReqHandlers.requests:
+                socket.emit("request-break", requestsView.getCurrentDatetime());
+                break;
+            case userReqHandlers.cancel:
+                socket.emit("cancel-status", requestsView.getCurrentDatetime());
+                break;
+            default: break;
+        }
+    })
+})
+socket.on("logged-as-adm", handshakeData => {
     admView.build();
     admView.display();
     const adm = {};
@@ -91,13 +94,22 @@ socket.on("logged-as-adm-m-reservations", handshakeData => {
             case adm.buttons.adm:
 
                 break;
+            case adm.buttons.passcode:
+
+                break;
             default: break;
         }
     })
 
 })
-socket.on("queue-delivery", queueList => {
-    userReservationsView.renderQueue(queueList);
+socket.on("queue-delivery", queueDetails => {
+    const mode = document.getElementById("config-mode").textContent;
+    console.log(mode);
+    if (queueDetails.mode === "reservations") {
+        userReservationsView.renderQueue(queueDetails.queue);
+    } else if (queueDetails.mode === "requests") {
+        requestsView.renderQueue(queueDetails.queue);
+    }
 });
 socket.on("update-user-config", config => {
     if (config.mode === "reservations") {

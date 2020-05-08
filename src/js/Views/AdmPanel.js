@@ -34,6 +34,12 @@ export default class AdmPanel {
                 <input type="text" id="add-adm" class="credentials-form__input">
                 <button id="add-to-adm" class="btn btn--success">Add</button>
                 </div>
+                <div id="btns-change-passcode" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Change current passcode</h4>
+                <label for="change-passcode" class="credentials-form__label">Provide new passcode for your project</label>
+                <input type="text" id="change-passcode" class="credentials-form__input">
+                <button id="change-passcode-submit" class="btn btn--success">Submit</button>
+                </div>
             </section>`
     }
     display() {
@@ -52,6 +58,7 @@ export default class AdmPanel {
                 decline: document.getElementById("kick-f-queue"),
             },
             adm: document.getElementById("add-to-adm"),
+            passcode: document.getElementById("change-passcode-submit"),
         }
     }
     getInputs() {
@@ -61,6 +68,7 @@ export default class AdmPanel {
             acceptance: document.getElementById("queue-add-username"),
             reject: document.getElementById("queue-removal-username"),
             adm: document.getElementById("add-adm"),
+            passcode: document.getElementById("change-passcode"),
         }
     }
 }

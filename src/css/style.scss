@@ -115,7 +115,6 @@ body{
 .footer{
     height: 10vh;
     padding-top: 2rem;
-    grid-column: span 2;
     &__author{
         text-align: center;
         color: $color-success-light;
@@ -150,12 +149,9 @@ body{
     }
 }
 .verification{
-    height: 100vh;
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    height: 90vh;
     &__header{
         height: 20%;
-        grid-column: span 2;
     }
     &__heading{
         height: 100%;
@@ -164,19 +160,13 @@ body{
     }
 }
 .login{
-    grid-column: 0/1;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
     &__heading{
         text-align: center;
     }
-}
-.register{
-    &__heading{
-        margin-bottom: 2rem;
-    }
-}
-.form--toLeft{
-    display: flex;
-    justify-content: center;
 }
 .credentials-form{
     display: flex;
