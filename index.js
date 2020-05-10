@@ -7,7 +7,7 @@ const mysql = require("mysql");
 let passcode = "AskIT2020";
 const usernameRegEx = /^[a-zA-Z]{5,15}$/;
 const passwordRegEx = /^[a-zA-Z0-9]{8,15}$/;
-const breakMode = "requests";
+let breakMode = "reservations";
 let allowedSlots = 2;
 const loggedInUsers = new Map();
 
@@ -135,6 +135,22 @@ io.on("connection", (socket) => {
       });
     });
   }
+  function changeStatusOfAll(newStatus, oldStatus) {
+    const connSocket = getDbConnectionSocket();
+    connSocket.connect(err => {
+      if (err) {
+        return;
+      }
+      const sql = `UPDATE users SET status="${newStatus}" WHERE status="${oldStatus}"`;
+      connSocket.query(sql, (err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+      });
+      connSocket.end();
+    });
+  }
   socket.emit("verify", { type: false, message: "" });
   socket.on("login-attempt", loginDetails => {
     if (!usernameRegEx.test(loginDetails.username) || !passwordRegEx.test(loginDetails.password) || loginDetails.password !== passcode) {
@@ -202,5 +218,43 @@ io.on("connection", (socket) => {
   socket.on("cancel-status", (timestamp) => {
     const user = getUserWithSocket(socket.id);
     changeStatus(user, sendQueueToUser, "idle", timestamp);
+  });
+  socket.on("adm-change-m-req", () => {
+    breakMode = "requests";
+    io.emit("verify", { type: true, message: "Break Tool mode changed to requests. Log in to see the changes." });
+    changeStatusOfAll("requested", "reserve");
+  })
+  socket.on("adm-change-m-res", () => {
+    breakMode = "reservations";
+    io.emit("verify", { type: true, message: "Break Tool mode changed to reservations. Log in to see the changes." });
+    changeStatusOfAll("reserve", "requested");
+  })
+  socket.on("adm-change-slots", (slots) => {
+    console.log(parseInt(slots));
+    console.log(isNaN(parseInt(slots)))
+    if (isNaN(parseInt(slots))) {
+      socket.emit("inform-user", "Provided value seems to be incorrect. Re check and try again.");
+    } else {
+      allowedSlots = parseInt(slots);
+      io.emit("verify", { type: true, message: "Max allowed breaks changed to: " + allowedSlots });
+    }
+  })
+  socket.on("reject-break-request", data => {
+    if (usernameRegEx.test(data[0]) && typeof loggedInUsers.get(data[0]) !== "undefined") {
+      getUserDetails(data[0], (err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        if (res[0].status === "requested") {
+          changeStatus(data[0], sendQueueToUser, "idle", data[1]);
+          io.to(loggedInUsers.get(data[0])).emit("inform-user", "Your break request has been rejected. Your status has been changed to IDLE.");
+        } else {
+          socket.emit("inform-user", "Could not find such request")
+        }
+      })
+    } else {
+      socket.emit("inform-user", "User not found within logged in users or else username is incorrect.");
+    }
   });
 });

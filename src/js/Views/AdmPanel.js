@@ -40,6 +40,12 @@ export default class AdmPanel {
                 <input type="text" id="change-passcode" class="credentials-form__input">
                 <button id="change-passcode-submit" class="btn btn--success">Submit</button>
                 </div>
+                <div id="btns-del-user" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Delete any user's account</h4>
+                <label for="delete-user" class="credentials-form__label">Provide username of an account to be deleted</label>
+                <input type="text" id="delete-user" class="credentials-form__input">
+                <button id="delete-user-submit" class="btn btn--wrong">Delete</button>
+                </div>
             </section>`
     }
     display() {
@@ -59,6 +65,7 @@ export default class AdmPanel {
             },
             adm: document.getElementById("add-to-adm"),
             passcode: document.getElementById("change-passcode-submit"),
+            deleteUser: document.getElementById("delete-user-submit"),
         }
     }
     getInputs() {
@@ -69,6 +76,21 @@ export default class AdmPanel {
             reject: document.getElementById("queue-removal-username"),
             adm: document.getElementById("add-adm"),
             passcode: document.getElementById("change-passcode"),
+            deleteUser: document.getElementById("delete-user"),
         }
+    }
+    getCurrentDatetime() {
+        const date = new Date();
+        const year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        if (month < 10) {
+            month = "0" + month;
+        }
+        let day = date.getDate();
+        if (day < 10) {
+            day = "0" + day;
+        }
+        const time = date.toLocaleTimeString();
+        return `${year}-${month}-${day} ${time}`;
     }
 }

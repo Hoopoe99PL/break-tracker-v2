@@ -77,16 +77,16 @@ socket.on("logged-as-adm", handshakeData => {
     adm.inputs.parent.addEventListener("click", e => {
         switch (e.target) {
             case adm.buttons.mode.requests:
-
+                socket.emit("adm-change-m-req");
                 break;
             case adm.buttons.mode.reservations:
-
+                socket.emit("adm-change-m-res");
                 break;
             case adm.buttons.slots:
-
+                socket.emit("adm-change-slots", adm.inputs.slots.value);
                 break;
             case adm.buttons.queue.decline:
-
+                socket.emit("reject-break-request", [adm.inputs.reject.value, admView.getCurrentDatetime()]);
                 break;
             case adm.buttons.queue.submit:
 
@@ -95,6 +95,9 @@ socket.on("logged-as-adm", handshakeData => {
 
                 break;
             case adm.buttons.passcode:
+
+                break;
+            case adm.buttons.deleteUser:
 
                 break;
             default: break;
@@ -114,8 +117,10 @@ socket.on("queue-delivery", queueDetails => {
 socket.on("update-user-config", config => {
     if (config.mode === "reservations") {
         userReservationsView.setUserViewConfig(config.slots, config.username, config.status);
+    } else if (config.mod === "requests") {
+        requestsView.setUserViewConfig(config.slots, config.username, config.status);
     }
 })
-
-
-//user reservations event handlers
+socket.on("inform-user", error => {
+    alert(error);
+})

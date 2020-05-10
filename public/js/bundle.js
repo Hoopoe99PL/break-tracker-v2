@@ -10472,6 +10472,12 @@ class AdmPanel {
                 <input type="text" id="change-passcode" class="credentials-form__input">
                 <button id="change-passcode-submit" class="btn btn--success">Submit</button>
                 </div>
+                <div id="btns-del-user" class="adm-reservations__ctrl-group">
+                <h4 class="adm-reservations__subtitle">Delete any user's account</h4>
+                <label for="delete-user" class="credentials-form__label">Provide username of an account to be deleted</label>
+                <input type="text" id="delete-user" class="credentials-form__input">
+                <button id="delete-user-submit" class="btn btn--wrong">Delete</button>
+                </div>
             </section>`
     }
     display() {
@@ -10491,6 +10497,7 @@ class AdmPanel {
             },
             adm: document.getElementById("add-to-adm"),
             passcode: document.getElementById("change-passcode-submit"),
+            deleteUser: document.getElementById("delete-user-submit"),
         }
     }
     getInputs() {
@@ -10501,6 +10508,7 @@ class AdmPanel {
             reject: document.getElementById("queue-removal-username"),
             adm: document.getElementById("add-adm"),
             passcode: document.getElementById("change-passcode"),
+            deleteUser: document.getElementById("delete-user"),
         }
     }
 }
@@ -10907,13 +10915,13 @@ socket.on("logged-as-adm", handshakeData => {
     adm.inputs.parent.addEventListener("click", e => {
         switch (e.target) {
             case adm.buttons.mode.requests:
-
+                socket.emit("adm-change-m-req");
                 break;
             case adm.buttons.mode.reservations:
-
+                socket.emit("adm-change-m-res");
                 break;
             case adm.buttons.slots:
-
+                socket.emit("adm-change-slots", adm.inputs.slots.value);
                 break;
             case adm.buttons.queue.decline:
 
@@ -10925,6 +10933,9 @@ socket.on("logged-as-adm", handshakeData => {
 
                 break;
             case adm.buttons.passcode:
+
+                break;
+            case adm.buttons.deleteUser:
 
                 break;
             default: break;
@@ -10946,9 +10957,9 @@ socket.on("update-user-config", config => {
         userReservationsView.setUserViewConfig(config.slots, config.username, config.status);
     }
 })
-
-
-//user reservations event handlers
+socket.on("error", error => {
+    alert(error);
+})
 
 
 /***/ }),
