@@ -4,7 +4,7 @@ const UserReservations = require("./Views/UserReservations.js").default;
 const UserRequests = require("./Views/UserRequests.js").default;
 const AdmPanel = require("./Views/AdmPanel.js").default;
 // init
-const socket = IOController.connect("http://localhost:3000/");
+const socket = IOController.connect("http://askit-break-scheduler.herokuapp.com");
 function replaceWithInfo(info, element) {
     element.innerHTML = `<h3 id="signing-info" class="comm-info-details">${info}</h3>`;
 }
