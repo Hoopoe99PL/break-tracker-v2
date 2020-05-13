@@ -285,12 +285,8 @@ io.on("connection", (socket) => {
           console.log(err);
           return;
         }
-        if (res[0].status !== "idle") {
-          changeStatus(data[0], sendQueueToUser, "idle", data[1]);
-          io.to(loggedInUsers.get(data[0])).emit("inform-user", "Your break request has been rejected. Your status has been changed to IDLE.");
-        } else {
-          socket.emit("inform-user", "Could not find such request")
-        }
+        changeStatus(data[0], sendQueueToUser, "idle", data[1]);
+        io.to(loggedInUsers.get(data[0])).emit("inform-user", "Your break request has been rejected. Your status has been changed to IDLE.");
       })
     } else {
       socket.emit("inform-user", "User not found within logged in users or else username is incorrect.");
@@ -304,12 +300,8 @@ io.on("connection", (socket) => {
           console.log(err);
           return;
         }
-        if (res[0].status !== "idle") {
-          changeStatus(data[0], sendQueueToUser, "break", data[1]);
-          io.to(loggedInUsers.get(data[0])).emit("inform-user", "Your break request has been accepted. Your status has been changed to BREAK.");
-        } else {
-          socket.emit("inform-user", "Could not find such request")
-        }
+        changeStatus(data[0], sendQueueToUser, "break", data[1]);
+        io.to(loggedInUsers.get(data[0])).emit("inform-user", "Your break request has been accepted. Your status has been changed to BREAK.");
       })
     } else {
       socket.emit("inform-user", "User not found within logged in users or else username is incorrect.");
