@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
 
 app.use(express.static(__dirname + "/public"));
 
-http.listen(3000, () => {
+http.listen(process.env.PORT, () => {
 
   console.log('Listening.');
 
