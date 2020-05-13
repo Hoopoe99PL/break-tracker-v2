@@ -10511,6 +10511,20 @@ class AdmPanel {
             deleteUser: document.getElementById("delete-user"),
         }
     }
+    getCurrentDatetime() {
+        const date = new Date();
+        const year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        if (month < 10) {
+            month = "0" + month;
+        }
+        let day = date.getDate();
+        if (day < 10) {
+            day = "0" + day;
+        }
+        const time = date.toLocaleTimeString();
+        return `${year}-${month}-${day} ${time}`;
+    }
 }
 
 /***/ }),
@@ -10924,19 +10938,20 @@ socket.on("logged-as-adm", handshakeData => {
                 socket.emit("adm-change-slots", adm.inputs.slots.value);
                 break;
             case adm.buttons.queue.decline:
-
+                socket.emit("reject-break-request", [adm.inputs.reject.value, admView.getCurrentDatetime()]);
                 break;
             case adm.buttons.queue.submit:
-
+                socket.emit("accept-break-request", [adm.inputs.acceptance.value, admView.getCurrentDatetime()]);
                 break;
             case adm.buttons.adm:
-
+                console.log(adm.buttons.adm.value)
+                socket.emit("delegate-new-admin", adm.inputs.adm.value);
                 break;
             case adm.buttons.passcode:
-
+                socket.emit("change-passcode", adm.inputs.passcode.value);
                 break;
             case adm.buttons.deleteUser:
-
+                socket.emit("adm-delete-user", adm.inputs.deleteUser.value);
                 break;
             default: break;
         }
@@ -10945,7 +10960,6 @@ socket.on("logged-as-adm", handshakeData => {
 })
 socket.on("queue-delivery", queueDetails => {
     const mode = document.getElementById("config-mode").textContent;
-    console.log(mode);
     if (queueDetails.mode === "reservations") {
         userReservationsView.renderQueue(queueDetails.queue);
     } else if (queueDetails.mode === "requests") {
@@ -10955,9 +10969,11 @@ socket.on("queue-delivery", queueDetails => {
 socket.on("update-user-config", config => {
     if (config.mode === "reservations") {
         userReservationsView.setUserViewConfig(config.slots, config.username, config.status);
+    } else if (config.mod === "requests") {
+        requestsView.setUserViewConfig(config.slots, config.username, config.status);
     }
 })
-socket.on("error", error => {
+socket.on("inform-user", error => {
     alert(error);
 })
 

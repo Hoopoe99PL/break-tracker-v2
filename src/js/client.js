@@ -89,16 +89,16 @@ socket.on("logged-as-adm", handshakeData => {
                 socket.emit("reject-break-request", [adm.inputs.reject.value, admView.getCurrentDatetime()]);
                 break;
             case adm.buttons.queue.submit:
-
+                socket.emit("accept-break-request", [adm.inputs.acceptance.value, admView.getCurrentDatetime()]);
                 break;
             case adm.buttons.adm:
-
+                socket.emit("delegate-new-admin", adm.inputs.adm.value);
                 break;
             case adm.buttons.passcode:
-
+                socket.emit("change-passcode", adm.inputs.passcode.value);
                 break;
             case adm.buttons.deleteUser:
-
+                socket.emit("adm-delete-user", adm.inputs.deleteUser.value);
                 break;
             default: break;
         }
@@ -107,7 +107,6 @@ socket.on("logged-as-adm", handshakeData => {
 })
 socket.on("queue-delivery", queueDetails => {
     const mode = document.getElementById("config-mode").textContent;
-    console.log(mode);
     if (queueDetails.mode === "reservations") {
         userReservationsView.renderQueue(queueDetails.queue);
     } else if (queueDetails.mode === "requests") {

@@ -147,6 +147,44 @@ io.on("connection", (socket) => {
           console.log(err);
           return;
         }
+        io.emit("verify", { type: true, message: "Administrator just restarted break queue. Log in again." })
+      });
+      connSocket.end();
+    });
+  }
+  function changeUsersType(user, newType) {
+    const connSocket = getDbConnectionSocket();
+    connSocket.connect(err => {
+      if (err) {
+        return;
+      }
+      const sql = `UPDATE users SET usersType="${newType}" WHERE username="${user}"`;
+      connSocket.query(sql, (err, res) => {
+        if (err) {
+          console.log(err);
+          socket.emit("inform-user", "Could not modify this user's account.")
+          return;
+        }
+        socket.emit("inform-user", `${user}'s account type changed to ${newType}. User should now log in again.`);
+        io.to(loggedInUsers.get(user)).emit("verify", { type: true, message: `Your account's type has been changed to ${newType}. Log in again to see the changes.` })
+      });
+      connSocket.end();
+    });
+  }
+  function deleteUser(user, callback) {
+    const connSocket = getDbConnectionSocket();
+    connSocket.connect(err => {
+      if (err) {
+        return;
+      }
+      const sql = `DELETE FROM users WHERE username="${user}"`;
+      connSocket.query(sql, (err, res) => {
+        if (err) {
+          console.log(err);
+          socket.emit("inform-user", "Could not delete this account.");
+          return;
+        }
+        callback();
       });
       connSocket.end();
     });
@@ -240,13 +278,14 @@ io.on("connection", (socket) => {
     }
   })
   socket.on("reject-break-request", data => {
-    if (usernameRegEx.test(data[0]) && typeof loggedInUsers.get(data[0]) !== "undefined") {
-      getUserDetails(data[0], (err, res) => {
+    if (usernameRegEx.test(data[0])) {
+      getUserDetails({ username: data[0] }, (err, res) => {
+        console.log(res);
         if (err) {
           console.log(err);
           return;
         }
-        if (res[0].status === "requested") {
+        if (res[0].status !== "idle") {
           changeStatus(data[0], sendQueueToUser, "idle", data[1]);
           io.to(loggedInUsers.get(data[0])).emit("inform-user", "Your break request has been rejected. Your status has been changed to IDLE.");
         } else {
@@ -257,4 +296,60 @@ io.on("connection", (socket) => {
       socket.emit("inform-user", "User not found within logged in users or else username is incorrect.");
     }
   });
+  socket.on("accept-break-request", data => {
+    if (usernameRegEx.test(data[0])) {
+      getUserDetails({ username: data[0] }, (err, res) => {
+        console.log(res);
+        if (err) {
+          console.log(err);
+          return;
+        }
+        if (res[0].status !== "idle") {
+          changeStatus(data[0], sendQueueToUser, "break", data[1]);
+          io.to(loggedInUsers.get(data[0])).emit("inform-user", "Your break request has been accepted. Your status has been changed to BREAK.");
+        } else {
+          socket.emit("inform-user", "Could not find such request")
+        }
+      })
+    } else {
+      socket.emit("inform-user", "User not found within logged in users or else username is incorrect.");
+    }
+  });
+  socket.on("delegate-new-admin", admin => {
+    console.log(admin)
+    if (usernameRegEx.test(admin)) {
+      getUserDetails({ username: admin }, (err, res) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        if (res.length < 1) {
+          socket.emit("inform-user", "Could not find such user");
+          return;
+        }
+        changeUsersType(admin, "adm");
+      })
+    } else {
+      socket.emit("inform-user", "Incorrect username.");
+    }
+  })
+  socket.on("change-passcode", newPasscode => {
+    if (passwordRegEx.test(newPasscode)) {
+      passcode = newPasscode;
+      socket.emit("inform-user", "Passcode changed.");
+      io.emit("verify", { type: true, message: "Passcode changed by admin. Log in again with new passcode." });
+    } else {
+      socket.emit("inform-user", "Provided passcode does not meet the criteria [a-zA-Z0-9]{8,15}.");
+    }
+  })
+  socket.on("adm-delete-user", user => {
+    if (usernameRegEx.test(user)) {
+      deleteUser(user, sendQueueToUser);
+      if (typeof loggedInUsers.get(user) !== "undefined") {
+        io.to(loggedInUsers.get(user)).emit("verify", { type: true, message: "Administrator deleted your account." });
+      }
+    } else {
+      socket.emit("inform-user", "Incorrect username");
+    }
+  })
 });
