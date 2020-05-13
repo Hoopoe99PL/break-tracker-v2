@@ -13,11 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "mysql": "^2.18.1",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "bcrypt": "^4.0.1",
-    "mysql": "^2.18.1",
     "node-sass": "^4.13.1",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
