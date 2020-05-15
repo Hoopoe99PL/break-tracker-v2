@@ -4,7 +4,7 @@ const http = require('http').createServer(app);
 const io = require('socket.io')(http, { cookie: false });
 const fs = require('fs');
 const mysql = require("mysql");
-let passcode = "AskIT2020";
+let passcode = "--------";
 const usernameRegEx = /^[a-zA-Z]{5,15}$/;
 const passwordRegEx = /^[a-zA-Z0-9]{8,15}$/;
 let breakMode = "reservations";
@@ -40,10 +40,10 @@ http.listen(process.env.PORT, () => {
 io.on("connection", (socket) => {
   function getDbConnectionSocket() {
     const dbCfg = {
-      host: "eu-cdbr-west-03.cleardb.net",
-      user: "b0113bbe0415f7",
-      password: "123cac7b",
-      database: "heroku_b239941e19f397d",
+      host: "--------------",
+      user: "---------------",
+      password: "-------------",
+      database: "-----------------",
       dateStrings: "date",
     };
     clientConn = mysql.createConnection(dbCfg);
