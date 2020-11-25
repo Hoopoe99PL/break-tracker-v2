@@ -37,4 +37,4 @@ Database recommended (tested): ClearDB, MySQL server.
 
 Created with [git](https://git-scm.com/) workflow.
 Author: Łukasz Dzierżawski
-Application is in use for one of my company's service desks.
+
