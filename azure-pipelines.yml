@@ -20,5 +20,5 @@ stages:
       - job: 
         displayName: CMD
         steps:
-          - script: Get-AzSubscription
+          - script: az account show --output table
             
