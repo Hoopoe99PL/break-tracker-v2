@@ -26,7 +26,5 @@ stages:
               azureSubscription: $(azureSubscription)
               scriptType: bash
               scriptLocation: inlineScript
-              inlineScript: |
-                echo Running Script Just Now
-                Get-AzSubscription
+              inlineScript: 'Get-AzSubscription'
             
