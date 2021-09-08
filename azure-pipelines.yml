@@ -1,0 +1,30 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  location: 'North Europe'
+  azureSubscription: 'pipelinestest'
+
+stages:
+  - stage: rgdeploy
+    displayName: Deploying resource group
+    jobs:
+      - job: 
+        displayName: CMD
+        steps:
+          - task: CmdLine@2
+            displayName: Running Bash
+            inputs:
+              azureSubscription: $(azureSubscription)
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: Get-AzSubscription
+            
