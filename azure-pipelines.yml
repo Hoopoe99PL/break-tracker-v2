@@ -26,5 +26,5 @@ stages:
               azureSubscription: $(azureSubscription)
               scriptType: pscore
               scriptLocation: inlineScript
-              inlineScript: Get-AzSubscription
+              inlineScript: echo 'SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS'
             
