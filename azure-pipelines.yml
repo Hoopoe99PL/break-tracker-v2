@@ -20,11 +20,5 @@ stages:
       - job: 
         displayName: CMD
         steps:
-          - task: CmdLine@2
-            displayName: Running Bash
-            inputs:
-              azureSubscription: $(azureSubscription)
-              scriptType: bash
-              scriptLocation: inlineScript
-              inlineScript: 'Get-AzSubscription'
+          - script: Get-AzSubscription
             
