@@ -24,7 +24,9 @@ stages:
             displayName: Running Bash
             inputs:
               azureSubscription: $(azureSubscription)
-              scriptType: pscore
+              scriptType: bash
               scriptLocation: inlineScript
-              inlineScript: echo 'SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS'
+              inlineScript: |
+                echo Running Script Just Now
+                Get-AzSubscription
             
